@@ -1,5 +1,6 @@
 import { PortableText } from '@portabletext/react';
 import Image from 'next/image';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, User, Calendar, Tag } from 'lucide-react';
@@ -24,17 +25,56 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const rawSlug = resolvedParams.slug;
   const decodedSlug = decodeURIComponent(rawSlug);
   const post = await client.fetch(postQuery, { slug: rawSlug, decodedSlug });
+
   if (!post) {
     return { title: 'Post Not Found' };
   }
+
+  const BASE_URL = 'https://halatechnology.ae';
+
+  // Use backend SEO title if available, otherwise fall back to article title
+  const seoTitle = post.seoTitle || post.title;
+
+  // Use backend meta description if available, otherwise fall back to excerpt, then article title
+  const seoDescription = post.metaDescription || post.excerpt || post.title;
+
+  // Canonical URL: article's own URL
+  const canonicalUrl = `${BASE_URL}/blogs/${post.slug}`;
+
+  // OG Image: dedicated ogImage field → mainImage → site default
+  const ogImageUrl = post.ogImage
+    ? urlForImage(post.ogImage)?.width(1200).height(630).url()
+    : post.mainImage
+      ? urlForImage(post.mainImage)?.width(1200).height(630).url()
+      : `${BASE_URL}/hero-images/HomeHeroimage.png`;
+
   return {
-    title: `${post.title} | Hala Technologies`,
-    description: post.title,
+    title: seoTitle,
+    description: seoDescription,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      type: 'article',
+      title: seoTitle,
+      description: seoDescription,
+      url: canonicalUrl,
+      siteName: 'Hala Technologies',
+      publishedTime: post.publishedAt,
+      authors: [post.authorName || 'Hala Team'],
+      images: ogImageUrl ? [{ url: ogImageUrl, width: 1200, height: 630, alt: seoTitle }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: seoTitle,
+      description: seoDescription,
+      images: ogImageUrl ? [ogImageUrl] : [],
+    },
   };
 }
 

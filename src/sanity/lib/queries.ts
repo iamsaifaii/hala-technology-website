@@ -21,7 +21,12 @@ export const postQuery = groq`*[_type == "post" && (slug.current == $slug || slu
   _createdAt,
   "authorName": author->name,
   "authorImage": author->image,
-  "categories": categories[]->title
+  "categories": categories[]->title,
+  seoTitle,
+  metaDescription,
+  excerpt,
+  focusKeyword,
+  ogImage
 }`
 
 export const postPathsQuery = groq`*[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))]{
