@@ -122,6 +122,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           data-widget-id="6a29d9d08eebf2dcc67d51e9"
           strategy="lazyOnload"
         />
+
+        {/* HubSpot Embed Script */}
+        <Script
+          id="hs-script-loader"
+          src="//js-na2.hs-scripts.com/247325874.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

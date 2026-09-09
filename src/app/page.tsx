@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
-import Script from 'next/script';
 import Navbar from '@/components/Navbar/Navbar';
 import Hero from '@/components/Home/HeroSection';
 import MarketingSolutions from '@/components/Home/MarketingSolutions';
@@ -57,12 +56,6 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className="font-jakarta bg-[#111111] text-white">
-      {/* HubSpot Embed Script */}
-      <Script
-        id="hs-script-loader"
-        src="//js-na2.hs-scripts.com/247326084.js"
-        strategy="lazyOnload"
-      />
       <Navbar />
       <main className="bg-[#111111]">
         <Hero />

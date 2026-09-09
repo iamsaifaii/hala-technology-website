@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import Script from 'next/script';
 import Navbar from '@/components/Navbar/Navbar';
 import ContactHero from '@/components/Contact/ContactHero';
 import ContactInfoCards from '@/components/Contact/ContactInfoCards';
@@ -44,12 +43,6 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="font-jakarta bg-[#111111] text-[#111] overflow-x-hidden min-h-screen flex flex-col">
-      {/* HubSpot Embed Script */}
-      <Script
-        id="hs-script-loader"
-        src="//js-na2.hs-scripts.com/247326084.js"
-        strategy="lazyOnload"
-      />
       <Navbar />
       <main className="flex-grow w-full">
         {/* 1. Case Study Style Hero Section */}
