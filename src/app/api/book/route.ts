@@ -91,6 +91,9 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
+const DEFAULT_PABBLY_WEBHOOK_URL =
+  'https://connect.pabbly.com/webhook-listener/webhook/IjU3NjMwNTZmMDYzNTA0M2Q1MjZjNTUzNiI_3D_pc/IjU3NjcwNTY4MDYzMjA0MzY1MjY0NTUzNjUxMzAi_pc';
+
 // ─── Route Handlers ──────────────────────────────────────────────────────────
 
 export async function GET()    { return methodNotAllowed(); }
@@ -244,7 +247,47 @@ export async function POST(request: Request) {
       </div>
     `;
 
-    // 8. Send email via Resend
+    // 8. Forward lead to Pabbly Connect Webhook
+    const pabblyWebhookUrl = process.env.PABBLY_WEBHOOK_URL || DEFAULT_PABBLY_WEBHOOK_URL;
+    if (pabblyWebhookUrl) {
+      try {
+        const pabblyPayload = {
+          name,
+          email,
+          jobTitle,
+          country,
+          date,
+          time,
+          budget: safeBudget,
+          howDidYouHear: safeHowDidYouHear,
+          services: services.join(', '),
+          servicesList: services,
+          message,
+          pageUrl: sanitize(body.pageUrl, 255),
+          ip: clientIp,
+          submittedAt: new Date().toISOString(),
+        };
+
+        const pabblyRes = await fetch(pabblyWebhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(pabblyPayload),
+        });
+
+        if (!pabblyRes.ok) {
+          const errText = await pabblyRes.text().catch(() => '');
+          console.warn(`[booking] Pabbly webhook returned status ${pabblyRes.status}:`, errText);
+        } else {
+          console.log('[booking] Successfully forwarded lead to Pabbly Connect');
+        }
+      } catch (pabblyErr) {
+        console.error('[booking] Failed to send lead to Pabbly Connect webhook:', pabblyErr);
+      }
+    }
+
+    // 9. Send email via Resend
     if (resend) {
       const { error: sendError } = await resend.emails.send({
         from: 'Hala Booking <Contact@halatechnology.ae>',

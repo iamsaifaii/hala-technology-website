@@ -167,7 +167,8 @@ export default function ContactCTA({ contained = false, formOnly = false }: { co
           ...formData,
           date: selectedDate?.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }),
           time: selectedTime,
-          captchaToken
+          captchaToken,
+          pageUrl: typeof window !== 'undefined' ? window.location.href : ''
         })
       });
       const data = await res.json();
