@@ -32,7 +32,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/best-digital-marketing-services-in-dubai',
     images: [
       {
-        url: 'https://halatechnology.ae/best-digital-marketing-services-in-dubai',
+        url: 'https://halatechnology.ae/og-image.png',
+        secureUrl: 'https://halatechnology.ae/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Digital Marketing Services - Hala Technology',
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
     title: 'Best Digital Marketing Services in Dubai | SEO, PPC & SMM',
     description:
     'Looking for digital marketing services in Dubai? Hala Technology helps businesses attract leads through SEO, PPC, social media and content.',
-    images: ['https://halatechnology.ae/hero-images/HomeHeroimage.png'],
+    images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {
     canonical: 'https://halatechnology.ae/best-digital-marketing-services-in-dubai',

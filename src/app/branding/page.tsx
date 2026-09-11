@@ -32,7 +32,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/branding-services',
     images: [
       {
-        url: 'https://halatechnology.ae/hero-images/HomeHeroimage.png',
+        url: 'https://halatechnology.ae/og-image.png',
+        secureUrl: 'https://halatechnology.ae/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Branding Services in Dubai - Hala Technology',
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
     title: 'Branding Services in Dubai | Hala Technology',
     description:
       'Looking for branding services in Dubai? Hala Technology crafts unique brand identities that help your business stand out. Book a free consultation.',
-    images: ['https://halatechnology.ae/hero-images/HomeHeroimage.png'],
+    images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {
     canonical: 'https://halatechnology.ae/branding-services',

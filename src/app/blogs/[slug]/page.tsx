@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ? urlForImage(post.ogImage)?.width(1200).height(630).url()
     : post.mainImage
       ? urlForImage(post.mainImage)?.width(1200).height(630).url()
-      : `${BASE_URL}/hero-images/HomeHeroimage.png`;
+      : `${BASE_URL}/og-image.png`;
 
   return {
     title: seoTitle,

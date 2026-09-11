@@ -22,7 +22,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/content-creation-services',
     images: [
       {
-        url: 'https://halatechnology.ae/content-creation-services',
+        url: 'https://halatechnology.ae/og-image.png',
+        secureUrl: 'https://halatechnology.ae/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Content Creation Services - Hala Technology',
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
     title: 'Content Creation Services | Social Media & Web Content',
     description:
     'Hala Technology provides content creation services in Dubai, from website copy to social posts and video scripts, built to tell your brand story.',
-    images: ['https://halatechnology.ae/hero-images/HomeHeroimage.png'],
+    images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {
     canonical: 'https://halatechnology.ae/content-creation-services',

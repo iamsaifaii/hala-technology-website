@@ -34,7 +34,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/social-media-marketing-services-in-dubai',
     images: [
       {
-        url: 'https://halatechnology.ae/social-media-marketing-services-in-dubai',
+        url: 'https://halatechnology.ae/og-image.png',
+        secureUrl: 'https://halatechnology.ae/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Social Media Marketing Services in Dubai - Hala Technology',
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
     title: 'Social Media Marketing Services in Dubai | SMM Services',
     description:
     'Boost your online presence with our social media marketing services in Dubai. We help brands create engaging content and campaigns.',
-    images: ['https://halatechnology.ae/hero-images/HomeHeroimage.png'],
+    images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {
     canonical: 'https://halatechnology.ae/social-media-marketing-services-in-dubai',

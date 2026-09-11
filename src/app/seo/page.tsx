@@ -34,7 +34,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/best-seo-services-in-dubai',
     images: [
       {
-        url: 'https://halatechnology.ae/best-seo-services-in-dubai',
+        url: 'https://halatechnology.ae/hero-images/SEOPAGEIMAGE.png',
+        secureUrl: 'https://halatechnology.ae/hero-images/SEOPAGEIMAGE.png',
         width: 1200,
         height: 630,
         alt: 'Best SEO Services in Dubai - Hala Technology',

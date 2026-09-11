@@ -31,7 +31,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/graphic-design-services-in-dubai',
     images: [
       {
-        url: 'https://halatechnology.ae/graphic-design-services-in-dubai',
+        url: 'https://halatechnology.ae/og-image.png',
+        secureUrl: 'https://halatechnology.ae/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Graphic Design Services in Dubai - Hala Technology',
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
     title: 'Graphic Design Services in Dubai | Graphic Design Agency',
     description:
     'Need creative visuals? Get graphic design services in Dubai for logos, ads and social media designs tailored to your business and audience.',
-    images: ['https://halatechnology.ae/hero-images/HomeHeroimage.png'],
+    images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {
     canonical: 'https://halatechnology.ae/graphic-design-services-in-dubai',

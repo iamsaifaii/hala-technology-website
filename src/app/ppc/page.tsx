@@ -34,7 +34,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/ppc-service-in-dubai',
     images: [
       {
-        url: 'https://halatechnology.ae/ppc-service-in-dubai',
+        url: 'https://halatechnology.ae/hero-images/PPCPAGEIMAGE.png',
+        secureUrl: 'https://halatechnology.ae/hero-images/PPCPAGEIMAGE.png',
         width: 1200,
         height: 630,
         alt: 'PPC Service in Dubai - Hala Technology',

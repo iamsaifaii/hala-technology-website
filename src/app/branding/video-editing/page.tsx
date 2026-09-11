@@ -32,7 +32,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/video-editing-services-dubai',
     images: [
       {
-        url: 'https://halatechnology.ae/video-editing-services-dubai',
+        url: 'https://halatechnology.ae/og-image.png',
+        secureUrl: 'https://halatechnology.ae/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Video Editing Services Dubai - Hala Technology',
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
     title: 'Video Editing Services Dubai | Video Editing Agency',
     description:
     'Hala Technology offers professional video editing services in Dubai for social media, ads & corporate videos. Turn raw footage into impact.',
-    images: ['https://halatechnology.ae/hero-images/HomeHeroimage.png'],
+    images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {
     canonical: 'https://halatechnology.ae/video-editing-services-dubai',

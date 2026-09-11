@@ -28,16 +28,21 @@ export const metadata: Metadata = {
     'branding agency dubai',
   ],
   openGraph: {
+    type: 'website',
+    locale: 'en_AE',
     title: 'Digital Marketing Agency Dubai | Best Marketing Company',
     description:
-    'Hala Technology is a leading digital marketing agency in Dubai helping brands grow with SEO, PPC & web development. Get a free audit today.',
+      'Hala Technology is a leading digital marketing agency in Dubai helping brands grow with SEO, PPC & web development. Get a free audit today.',
     url: 'https://halatechnology.ae',
+    siteName: 'Hala Technologies',
     images: [
       {
-        url: 'https://halatechnology.ae',
+        url: 'https://halatechnology.ae/og-image.png',
+        secureUrl: 'https://halatechnology.ae/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Hala Technology - Digital Marketing Agency Dubai',
+        type: 'image/png',
+        alt: 'Hala Technologies - Grow your brand. Dominate the market.',
       },
     ],
   },
@@ -45,8 +50,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Digital Marketing Agency Dubai | Best Marketing Company',
     description:
-    'Hala Technology is a leading digital marketing agency in Dubai helping brands grow with SEO, PPC & web development. Get a free audit today.',
-    images: ['https://halatechnology.ae/hero-images/HomeHeroimage.png'],
+      'Hala Technology is a leading digital marketing agency in Dubai helping brands grow with SEO, PPC & web development. Get a free audit today.',
+    images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {
     canonical: 'https://halatechnology.ae',

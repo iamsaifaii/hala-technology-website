@@ -32,7 +32,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/ai-agent-services',
     images: [
       {
-        url: 'https://halatechnology.ae/ai-agent-services',
+        url: 'https://halatechnology.ae/hero-images/AiagentHeroimage.png',
+        secureUrl: 'https://halatechnology.ae/hero-images/AiagentHeroimage.png',
         width: 1200,
         height: 630,
         alt: 'AI Agent Services - Hala Technology',

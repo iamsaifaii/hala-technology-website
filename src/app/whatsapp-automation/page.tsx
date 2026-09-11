@@ -34,7 +34,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/whatsapp-automation-services',
     images: [
       {
-        url: 'https://halatechnology.ae/whatsapp-automation-services',
+        url: 'https://halatechnology.ae/hero-images/WhatsappHeroImage.png',
+        secureUrl: 'https://halatechnology.ae/hero-images/WhatsappHeroImage.png',
         width: 1200,
         height: 630,
         alt: 'WhatsApp Automation Services - Hala Technology',

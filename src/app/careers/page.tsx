@@ -21,7 +21,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/careers',
     images: [
       {
-        url: 'https://halatechnology.ae/hero-images/HomeHeroimage.png',
+        url: 'https://halatechnology.ae/og-image.png',
+        secureUrl: 'https://halatechnology.ae/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Hala Technologies Careers',
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     title: 'Careers & Job Openings in Dubai | Join Our Team | Hala Technologies',
     description:
       'Join Hala Technologies in Dubai. Explore current career opportunities for full-stack developers, graphic designers, content creators, and AI engineers.',
-    images: ['https://halatechnology.ae/hero-images/HomeHeroimage.png'],
+    images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {
     canonical: 'https://halatechnology.ae/careers',

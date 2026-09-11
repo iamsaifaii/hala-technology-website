@@ -35,7 +35,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/web-development-services-in-dubai',
     images: [
       {
-        url: 'https://halatechnology.ae/hero-images/HomeHeroimage.png',
+        url: 'https://halatechnology.ae/og-image.png',
+        secureUrl: 'https://halatechnology.ae/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Web Development Services in Dubai - Hala Technology',
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
     title: 'Web Development Services in Dubai | Hala Technology',
     description:
       'Build a fast, modern website with web development services in Dubai. Hala Technology creates custom, responsive and conversion-focused websites.',
-    images: ['https://halatechnology.ae/hero-images/HomeHeroimage.png'],
+    images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {
     canonical: 'https://halatechnology.ae/web-development-services-in-dubai',

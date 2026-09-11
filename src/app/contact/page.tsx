@@ -21,7 +21,8 @@ export const metadata: Metadata = {
     url: 'https://halatechnology.ae/contact',
     images: [
       {
-        url: 'https://halatechnology.ae/hero-images/HomeHeroimage.png',
+        url: 'https://halatechnology.ae/og-image.png',
+        secureUrl: 'https://halatechnology.ae/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Contact Hala Technologies',
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     title: 'Contact Us | Schedule a Consultation | Hala Technology Dubai',
     description:
       'Get in touch with Hala Smart Technologies in Dubai. Schedule a 15-minute guided tour, request a custom proposal, or speak directly with our strategic consultants.',
-    images: ['https://halatechnology.ae/hero-images/HomeHeroimage.png'],
+    images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {
     canonical: 'https://halatechnology.ae/contact',
