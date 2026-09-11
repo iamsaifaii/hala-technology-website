@@ -91,8 +91,16 @@ body {
 }
 
 /* Optimize image & background rendering */
-img, svg {
+img:not(chat-widget *), svg:not(chat-widget *) {
   content-visibility: auto;
+}
+
+/* Ensure third-party chat widget avatars & icons render immediately */
+chat-widget,
+chat-widget *,
+[data-chat-widget],
+[data-chat-widget] * {
+  content-visibility: visible !important;
 }
 
 /* Navbar backdrop-blur layer — promote to dedicated GPU layer */
