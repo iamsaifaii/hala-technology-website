@@ -52,8 +52,9 @@ export default function LocalBusinessSchema() {
       ]
     },
     "sameAs": [
-      "https://www.linkedin.com/company/halatechnologies",
-      "https://www.instagram.com/halatechnologies"
+      "https://www.linkedin.com/company/hala-smart-technologies/",
+      "https://www.instagram.com/halatechnology/",
+      "https://www.facebook.com/HalaSmartTechnology"
     ]
   };
 
