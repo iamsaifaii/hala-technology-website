@@ -25,16 +25,34 @@ export const postType = defineType({
       title: 'URL Slug',
       type: 'slug',
       group: 'content',
+      description: 'The URL-friendly identifier for this article (e.g., seo-consulting-services). Must be all lowercase with hyphens and no spaces.',
       options: {
         source: 'title',
         maxLength: 96,
-        slugify: (input) => input
-                         .toLowerCase()
-                         .replace(/\s+/g, '-')
-                         .replace(/[^\w-]+/g, '')
-                         .slice(0, 96)
+        slugify: (input) =>
+          input
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .slice(0, 96),
       },
-      validation: (rule) => rule.required(),
+      validation: (rule) =>
+        rule.required().custom((slug) => {
+          if (!slug?.current) return 'Slug is required';
+          const current = slug.current;
+          if (/\s/.test(current)) {
+            return 'Slug cannot contain spaces. Use hyphens (-) instead (e.g., seo-consulting-services).';
+          }
+          if (current !== current.toLowerCase()) {
+            return 'Slug must be in lowercase only.';
+          }
+          if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(current)) {
+            return 'Slug can only contain lowercase letters, numbers, and hyphens (no consecutive hyphens or special characters).';
+          }
+          return true;
+        }),
     }),
     defineField({
       name: 'excerpt',

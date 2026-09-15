@@ -39,12 +39,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let blogSitemap: MetadataRoute.Sitemap = [];
   try {
     const posts = await client.fetch(`*[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))]{ "slug": slug.current, _updatedAt }`);
-    blogSitemap = posts.map((post: any) => ({
-      url: `${baseUrl}/blogs/${encodeURIComponent(post.slug)}`,
-      lastModified: new Date(post._updatedAt || now),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    }));
+    blogSitemap = posts.map((post: any) => {
+      const cleanSlug = (post.slug || '').toLowerCase().trim().replace(/[\s_]+/g, '-');
+      return {
+        url: `${baseUrl}/blogs/${cleanSlug}`,
+        lastModified: new Date(post._updatedAt || now),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+      };
+    });
   } catch (error) {
     console.error("Failed to fetch Sanity posts for sitemap", error);
   }

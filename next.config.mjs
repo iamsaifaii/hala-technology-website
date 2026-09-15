@@ -239,6 +239,16 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/blogs/SEO%20Consulting%20Services',
+        destination: '/blogs/seo-consulting-services',
+        permanent: true,
+      },
+      {
+        source: '/blogs/SEO Consulting Services',
+        destination: '/blogs/seo-consulting-services',
+        permanent: true,
+      },
+      {
         source: '/case-study',
         destination: '/case-studies',
         permanent: true,

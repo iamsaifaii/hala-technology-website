@@ -11,7 +11,7 @@ export const postsQuery = groq`*[_type == "post" && defined(slug.current) && !(_
   "authorImage": author->image
 }`
 
-export const postQuery = groq`*[_type == "post" && (slug.current == $slug || slug.current == $decodedSlug || slug == $slug || slug == $decodedSlug) && !(_id in path("drafts.**"))][0] {
+export const postQuery = groq`*[_type == "post" && (slug.current == $slug || slug.current == $decodedSlug || slug.current == $normalizedSlug || slug == $slug || slug == $decodedSlug || slug == $normalizedSlug) && !(_id in path("drafts.**"))][0] {
   _id,
   title,
   "slug": slug.current,

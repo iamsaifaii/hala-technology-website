@@ -151,3 +151,19 @@ div[id*="tag-assistant"] *,
 div[id*="gtm_debug"] * {
   all: revert !important;
 }
+
+/* ─── Blog Article Content Link Styling ──────────────── */
+.blog-content a {
+  color: #007FFF !important;
+  font-weight: 600 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 4px !important;
+  text-decoration-color: rgba(0, 127, 255, 0.5) !important;
+  transition: all 0.2s ease !important;
+}
+
+.blog-content a:hover {
+  color: #0055b3 !important;
+  text-decoration-color: #0055b3 !important;
+}
+

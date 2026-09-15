@@ -55,7 +55,8 @@ export default async function LatestBlogsSection({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
           {posts.map((post: any) => {
             const rawSlug = typeof post.slug === 'string' ? post.slug : post.slug?.current;
-            const postHref = rawSlug ? `/blogs/${encodeURIComponent(rawSlug)}` : '/blogs';
+            const cleanSlug = (rawSlug || '').toLowerCase().trim().replace(/[\s_]+/g, '-');
+            const postHref = cleanSlug ? `/blogs/${cleanSlug}` : '/blogs';
             const displayDate = post.publishedAt || post._createdAt;
 
             return (

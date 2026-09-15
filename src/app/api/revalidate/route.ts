@@ -35,12 +35,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Bad Request' }, { status: 400 });
     }
 
-    // Revalidate main website layout & home page
+    // Revalidate main website layout, home page, and blogs index
     revalidatePath('/', 'layout');
+    revalidatePath('/blogs');
 
     // Revalidate specific blog page if slug provided
     if (body.slug) {
-      revalidatePath(`/blogs/${body.slug}`);
+      const cleanSlug = body.slug.toLowerCase().trim().replace(/[\s_]+/g, '-');
+      revalidatePath(`/blogs/${cleanSlug}`);
+      if (cleanSlug !== body.slug) {
+        revalidatePath(`/blogs/${body.slug}`);
+      }
     }
 
     return NextResponse.json({ success: true });

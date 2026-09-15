@@ -2,7 +2,7 @@ import { PortableText } from '@portabletext/react';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { ArrowLeft, User, Calendar, Tag } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Script from 'next/script';
@@ -21,7 +21,7 @@ export const revalidate = 60;
 export async function generateStaticParams() {
   const posts = await client.fetch(postPathsQuery);
   return (posts || []).map((post: { slug: string }) => ({
-    slug: post.slug,
+    slug: (post.slug || '').toLowerCase().trim().replace(/[\s_]+/g, '-'),
   }));
 }
 
@@ -29,7 +29,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const resolvedParams = await params;
   const rawSlug = resolvedParams.slug;
   const decodedSlug = decodeURIComponent(rawSlug);
-  const post = await client.fetch(postQuery, { slug: rawSlug, decodedSlug });
+  const normalizedSlug = decodedSlug.toLowerCase().trim().replace(/[\s_]+/g, '-');
+  const post = await client.fetch(postQuery, { slug: rawSlug, decodedSlug, normalizedSlug });
 
   if (!post) {
     return { title: 'Post Not Found' };
@@ -43,8 +44,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // Use backend meta description if available, otherwise fall back to excerpt, then article title
   const seoDescription = post.metaDescription || post.excerpt || post.title;
 
-  // Canonical URL: article's own URL
-  const canonicalUrl = `${BASE_URL}/blogs/${post.slug}`;
+  // Canonical URL: article's own clean canonical URL
+  const canonicalSlug = typeof post.slug === 'string' ? post.slug : post.slug?.current || normalizedSlug;
+  const canonicalUrl = `${BASE_URL}/blogs/${canonicalSlug}`;
 
   // OG Image: dedicated ogImage field → mainImage → site default
   const ogImageUrl = post.ogImage
@@ -96,6 +98,56 @@ const ptComponents = {
       );
     },
   },
+  marks: {
+    link: ({ value, children }: any) => {
+      const rawHref = value?.href || '';
+      const isInternal =
+        rawHref.startsWith('/') ||
+        rawHref.startsWith('#') ||
+        rawHref.includes('halatechnology.ae') ||
+        rawHref.includes('localhost');
+
+      // Convert full halatechnology.ae URLs to relative paths for instant client-side routing
+      let targetHref = rawHref;
+      if (rawHref.includes('halatechnology.ae')) {
+        targetHref = rawHref.replace(/^https?:\/\/(www\.)?halatechnology\.ae/, '') || '/';
+      }
+
+      if (isInternal) {
+        return (
+          <Link
+            href={targetHref}
+            className="text-[#007FFF] font-semibold underline underline-offset-4 decoration-[#007FFF]/60 hover:text-[#0055b3] hover:decoration-[#0055b3] transition-colors inline"
+          >
+            {children}
+          </Link>
+        );
+      }
+
+      return (
+        <a
+          href={rawHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#007FFF] font-semibold underline underline-offset-4 decoration-[#007FFF]/60 hover:text-[#0055b3] hover:decoration-[#0055b3] transition-colors inline"
+        >
+          {children}
+        </a>
+      );
+    },
+    strong: ({ children }: any) => (
+      <strong className="font-bold text-[#111111]">{children}</strong>
+    ),
+    em: ({ children }: any) => (
+      <em className="italic">{children}</em>
+    ),
+    underline: ({ children }: any) => (
+      <span className="underline underline-offset-4">{children}</span>
+    ),
+    code: ({ children }: any) => (
+      <code className="bg-[#f4f4f6] text-[#007FFF] px-1.5 py-0.5 rounded text-sm font-mono border border-[#e5e7eb]">{children}</code>
+    ),
+  },
   block: {
     h1: ({ children }: any) => <h1 className="text-4xl md:text-5xl font-jakarta font-bold mt-16 mb-6 text-[#111111] leading-tight">{children}</h1>,
     h2: ({ children }: any) => <h2 className="text-3xl md:text-4xl font-jakarta font-bold mt-12 mb-5 text-[#111111] leading-tight">{children}</h2>,
@@ -118,10 +170,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const resolvedParams = await params;
   const rawSlug = resolvedParams.slug;
   const decodedSlug = decodeURIComponent(rawSlug);
-  const post = await client.fetch(postQuery, { slug: rawSlug, decodedSlug });
+  const normalizedSlug = decodedSlug.toLowerCase().trim().replace(/[\s_]+/g, '-');
+  const post = await client.fetch(postQuery, { slug: rawSlug, decodedSlug, normalizedSlug });
 
   if (!post) {
     notFound();
+  }
+
+  // Canonical slug enforcement: if URL visited was not the clean canonical slug (e.g. SEO%20Consulting%20Services), permanently redirect (301/308)
+  const canonicalSlug = typeof post.slug === 'string' ? post.slug : post.slug?.current;
+  if (canonicalSlug && rawSlug !== canonicalSlug && decodedSlug !== canonicalSlug) {
+    permanentRedirect(`/blogs/${canonicalSlug}`);
   }
 
   return (
@@ -221,7 +280,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </div>
           )}
 
-          <div className="prose prose-lg max-w-none text-[#444444]">
+          <div className="blog-content prose prose-lg max-w-none text-[#444444]">
             <PortableText value={post.body} components={ptComponents} />
           </div>
           
