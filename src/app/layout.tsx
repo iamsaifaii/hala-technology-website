@@ -131,6 +131,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           src="//js-na2.hs-scripts.com/247325874.js"
           strategy="afterInteractive"
         />
+
+        {/* GoHighLevel / LeadConnector External Tracking */}
+        <Script
+          id="leadconnector-tracking"
+          src="https://link.msgsndr.com/js/external-tracking.js"
+          data-tracking-id="tk_e6fce949eb71496dba81405198a3ca81"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
