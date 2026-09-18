@@ -11,7 +11,7 @@ export const postsQuery = groq`*[_type == "post" && defined(slug.current) && !(_
   "authorImage": author->image
 }`
 
-export const postQuery = groq`*[_type == "post" && (slug.current == $slug || slug.current == $decodedSlug || slug.current == $normalizedSlug || slug == $slug || slug == $decodedSlug || slug == $normalizedSlug) && !(_id in path("drafts.**"))][0] {
+export const postQuery = groq`*[_type == "post" && (slug.current in [$slug, $decodedSlug, $normalizedSlug, $spacedSlug, $underscoredSlug] || slug in [$slug, $decodedSlug, $normalizedSlug, $spacedSlug, $underscoredSlug]) && !(_id in path("drafts.**"))][0] {
   _id,
   title,
   "slug": slug.current,
@@ -27,6 +27,29 @@ export const postQuery = groq`*[_type == "post" && (slug.current == $slug || slu
   excerpt,
   focusKeyword,
   ogImage
+}`
+
+export const postByIdQuery = groq`*[_type == "post" && _id == $id && !(_id in path("drafts.**"))][0] {
+  _id,
+  title,
+  "slug": slug.current,
+  mainImage,
+  body,
+  publishedAt,
+  _createdAt,
+  "authorName": author->name,
+  "authorImage": author->image,
+  "categories": categories[]->title,
+  seoTitle,
+  metaDescription,
+  excerpt,
+  focusKeyword,
+  ogImage
+}`
+
+export const allPostSlugsQuery = groq`*[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))]{
+  _id,
+  "slug": slug.current
 }`
 
 export const postPathsQuery = groq`*[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))]{

@@ -9,7 +9,7 @@ import Script from 'next/script';
 
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
-import { postQuery, postPathsQuery } from '@/sanity/lib/queries';
+import { postQuery, postByIdQuery, allPostSlugsQuery, postPathsQuery } from '@/sanity/lib/queries';
 import Navbar from '@/components/Navbar/Navbar';
 
 const Footer = dynamic(() => import('@/components/Home/Footer'));
@@ -17,6 +17,42 @@ const OutroMessage = dynamic(() => import('@/components/About/OutroMessage'));
 const LatestBlogsSection = dynamic(() => import('@/components/Blogs/LatestBlogsSection'));
 
 export const revalidate = 60;
+export const dynamicParams = true;
+
+async function getPost(rawSlug: string) {
+  const decodedSlug = decodeURIComponent(rawSlug || '');
+  const normalizedSlug = decodedSlug.toLowerCase().trim().replace(/[\s_]+/g, '-');
+  const spacedSlug = normalizedSlug.replace(/-/g, ' ');
+  const underscoredSlug = normalizedSlug.replace(/-/g, '_');
+
+  // 1. Direct query with exact and common normalized slug variations
+  let post = await client.fetch(postQuery, {
+    slug: rawSlug,
+    decodedSlug,
+    normalizedSlug,
+    spacedSlug,
+    underscoredSlug,
+  });
+
+  // 2. Resilient Fallback: If no direct match (e.g. CMS slug had irregular spaces/casing),
+  // compare normalized slugs in memory and fetch by document _id
+  if (!post) {
+    try {
+      const allPosts = await client.fetch(allPostSlugsQuery);
+      const matched = (allPosts || []).find((p: { _id: string; slug: string }) => {
+        const pNorm = (p.slug || '').toLowerCase().trim().replace(/[\s_]+/g, '-');
+        return pNorm === normalizedSlug;
+      });
+      if (matched?._id) {
+        post = await client.fetch(postByIdQuery, { id: matched._id });
+      }
+    } catch (err) {
+      console.error('[getPost] Error in fallback slug resolution:', err);
+    }
+  }
+
+  return { post, normalizedSlug };
+}
 
 export async function generateStaticParams() {
   const posts = await client.fetch(postPathsQuery);
@@ -27,10 +63,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
-  const rawSlug = resolvedParams.slug;
-  const decodedSlug = decodeURIComponent(rawSlug);
-  const normalizedSlug = decodedSlug.toLowerCase().trim().replace(/[\s_]+/g, '-');
-  const post = await client.fetch(postQuery, { slug: rawSlug, decodedSlug, normalizedSlug });
+  const { post, normalizedSlug } = await getPost(resolvedParams.slug);
 
   if (!post) {
     return { title: 'Post Not Found' };
@@ -44,9 +77,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // Use backend meta description if available, otherwise fall back to excerpt, then article title
   const seoDescription = post.metaDescription || post.excerpt || post.title;
 
-  // Canonical URL: article's own clean canonical URL
-  const canonicalSlug = typeof post.slug === 'string' ? post.slug : post.slug?.current || normalizedSlug;
-  const canonicalUrl = `${BASE_URL}/blogs/${canonicalSlug}`;
+  // Clean canonical slug: guaranteed lowercase, hyphenated, no %20 or spaces
+  const rawCanonical = typeof post.slug === 'string' ? post.slug : post.slug?.current || normalizedSlug;
+  const cleanCanonicalSlug = (rawCanonical || normalizedSlug || '').toLowerCase().trim().replace(/[\s_]+/g, '-');
+  const canonicalUrl = `${BASE_URL}/blogs/${cleanCanonicalSlug}`;
 
   // OG Image: dedicated ogImage field → mainImage → site default
   const ogImageUrl = post.ogImage
@@ -169,18 +203,18 @@ const ptComponents = {
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const rawSlug = resolvedParams.slug;
-  const decodedSlug = decodeURIComponent(rawSlug);
-  const normalizedSlug = decodedSlug.toLowerCase().trim().replace(/[\s_]+/g, '-');
-  const post = await client.fetch(postQuery, { slug: rawSlug, decodedSlug, normalizedSlug });
+  const decodedSlug = decodeURIComponent(rawSlug || '');
+  const { post, normalizedSlug } = await getPost(rawSlug);
 
   if (!post) {
     notFound();
   }
 
-  // Canonical slug enforcement: if URL visited was not the clean canonical slug (e.g. SEO%20Consulting%20Services), permanently redirect (301/308)
-  const canonicalSlug = typeof post.slug === 'string' ? post.slug : post.slug?.current;
-  if (canonicalSlug && rawSlug !== canonicalSlug && decodedSlug !== canonicalSlug) {
-    permanentRedirect(`/blogs/${canonicalSlug}`);
+  // Canonical slug enforcement: if URL visited was not the clean canonical slug (e.g. /blogs/seo%20agency%20dubai or uppercase), permanently redirect (301/308) to the clean URL
+  const rawCanonical = typeof post.slug === 'string' ? post.slug : post.slug?.current || normalizedSlug;
+  const cleanCanonicalSlug = (rawCanonical || normalizedSlug || '').toLowerCase().trim().replace(/[\s_]+/g, '-');
+  if (cleanCanonicalSlug && rawSlug !== cleanCanonicalSlug && decodedSlug !== cleanCanonicalSlug) {
+    permanentRedirect(`/blogs/${cleanCanonicalSlug}`);
   }
 
   return (

@@ -249,6 +249,16 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/blogs/seo%20agency%20dubai',
+        destination: '/blogs/seo-agency-dubai',
+        permanent: true,
+      },
+      {
+        source: '/blogs/seo agency dubai',
+        destination: '/blogs/seo-agency-dubai',
+        permanent: true,
+      },
+      {
         source: '/case-study',
         destination: '/case-studies',
         permanent: true,

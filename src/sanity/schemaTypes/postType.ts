@@ -25,9 +25,9 @@ export const postType = defineType({
       title: 'URL Slug',
       type: 'slug',
       group: 'content',
-      description: 'The URL-friendly identifier for this article (e.g., seo-consulting-services). Must be all lowercase with hyphens and no spaces.',
+      description: 'The URL-friendly identifier for this article (e.g., seo-agency-dubai). Click Generate or type in lowercase with hyphens.',
       options: {
-        source: 'title',
+        source: (doc: any) => doc?.focusKeyword || doc?.title || '',
         maxLength: 96,
         slugify: (input) =>
           input
@@ -43,7 +43,7 @@ export const postType = defineType({
           if (!slug?.current) return 'Slug is required';
           const current = slug.current;
           if (/\s/.test(current)) {
-            return 'Slug cannot contain spaces. Use hyphens (-) instead (e.g., seo-consulting-services).';
+            return 'Slug cannot contain spaces. Use hyphens (-) instead (e.g., seo-agency-dubai). Click "Generate" to create a clean slug.';
           }
           if (current !== current.toLowerCase()) {
             return 'Slug must be in lowercase only.';
