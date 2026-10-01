@@ -41,13 +41,20 @@ const teamMembers = [
   },
   {
     id: 6,
+    name: 'Salman',
+    role: 'Videographer',
+    category: 'Creative',
+    image: '/team-pics/Salman.JPG',
+  },
+  {
+    id: 7,
     name: 'Chaman Shafique',
     role: 'Content Writer',
     category: 'Creative',
     image: '/team-pics/chaman shafiq.png',
   },
   {
-    id: 7,
+    id: 8,
     name: 'Syeda Masoom Zahra',
     role: 'Graphic Design Intern',
     category: 'Creative',
