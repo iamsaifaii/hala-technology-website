@@ -155,6 +155,8 @@ export default function AboutHero() {
                   <img
                     src={logo.src}
                     alt={logo.alt}
+                    loading="lazy"
+                    decoding="async"
                     className="max-h-8 sm:max-h-10 md:max-h-12 w-auto object-contain opacity-80 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-105"
                   />
                 </div>
@@ -168,6 +170,8 @@ export default function AboutHero() {
                   <img
                     src={logo.src}
                     alt={logo.alt}
+                    loading="lazy"
+                    decoding="async"
                     className="max-h-8 sm:max-h-10 md:max-h-12 w-auto object-contain opacity-80 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-105"
                   />
                 </div>

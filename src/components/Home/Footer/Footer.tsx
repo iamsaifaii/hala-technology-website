@@ -72,7 +72,7 @@ export default function Footer() {
     <div className="pt-10">
       <style>{`
         .footer-bg {
-          background-image: url('/123 PHONE VIEW.png');
+          background-image: url('/phone-view.png');
         }
         @media (min-width: 768px) {
           .footer-bg {
@@ -92,7 +92,8 @@ export default function Footer() {
               width={280} 
               height={90} 
               className="object-contain brightness-0 invert" 
-              priority
+              loading="lazy"
+              sizes="280px"
             />
           </div>
 

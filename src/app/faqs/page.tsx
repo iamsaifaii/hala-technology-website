@@ -5,6 +5,9 @@ import Footer from '@/components/Home/Footer/Footer';
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions | Hala Technology',
   description: 'Frequently Asked Questions about Hala Technology services',
+  alternates: {
+    canonical: 'https://halatechnology.ae/faqs',
+  },
 };
 
 export default function FAQPage() {

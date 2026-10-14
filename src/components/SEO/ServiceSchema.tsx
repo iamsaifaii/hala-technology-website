@@ -1,4 +1,4 @@
-import Script from 'next/script';
+import JsonLd from './JsonLd';
 
 interface ServiceSchemaProps {
   name: string;
@@ -59,10 +59,9 @@ export default function ServiceSchema({
   };
 
   return (
-    <Script
+    <JsonLd
       id={`service-schema-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      data={schema}
     />
   );
 }

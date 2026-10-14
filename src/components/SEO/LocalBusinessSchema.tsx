@@ -1,4 +1,4 @@
-import Script from 'next/script';
+import JsonLd from './JsonLd';
 
 export default function LocalBusinessSchema() {
   const schema = {
@@ -59,10 +59,6 @@ export default function LocalBusinessSchema() {
   };
 
   return (
-    <Script
-      id="local-business-schema"
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-    />
+    <JsonLd id="local-business-schema" data={schema} />
   );
 }

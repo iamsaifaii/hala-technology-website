@@ -4,26 +4,30 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 
+import { readConsent, writeConsent } from '@/lib/consent';
+
 export default function CookieBanner() {
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
-    // Check if user has already accepted or declined cookies
-    const cookieConsent = localStorage.getItem('hala_cookie_consent');
-    if (!cookieConsent) {
+    // Only prompt visitors who have not chosen yet.
+    if (readConsent() === null) {
       // Small delay before showing the banner for better UX
       const timer = setTimeout(() => setShowBanner(true), 1500);
       return () => clearTimeout(timer);
     }
   }, []);
 
+  // writeConsent persists the choice, pushes a Consent Mode v2 update to GTM,
+  // and fires the event ConsentGatedScripts listens to — so these buttons now
+  // actually control whether third-party trackers load.
   const handleAccept = () => {
-    localStorage.setItem('hala_cookie_consent', 'accepted');
+    writeConsent('accepted');
     setShowBanner(false);
   };
 
   const handleDecline = () => {
-    localStorage.setItem('hala_cookie_consent', 'declined');
+    writeConsent('declined');
     setShowBanner(false);
   };
 

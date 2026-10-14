@@ -5,6 +5,9 @@ import Footer from '@/components/Home/Footer/Footer';
 export const metadata: Metadata = {
   title: 'Terms & Conditions | Hala Technology',
   description: 'Terms and Conditions for Hala Technology',
+  alternates: {
+    canonical: 'https://halatechnology.ae/terms-and-conditions',
+  },
 };
 
 export default function TermsAndConditionsPage() {
@@ -14,7 +17,7 @@ export default function TermsAndConditionsPage() {
       <main className="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
         <h1 className="text-4xl md:text-5xl font-bold mb-8 text-[#007FFF]">Terms &amp; Conditions</h1>
         <div className="space-y-6 text-[#cccccc] leading-relaxed">
-          <p className="font-semibold text-white">Last updated: {new Date().toLocaleDateString()}</p>
+          <p className="font-semibold text-white">Last updated: 14 October 2026</p>
           
           <h2 className="text-2xl font-bold text-white mt-10">1. Agreement to Terms</h2>
           <p>

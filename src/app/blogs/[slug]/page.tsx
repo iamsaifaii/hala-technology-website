@@ -3,10 +3,11 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
+import { unstable_cache } from 'next/cache';
 import { ArrowLeft, User, Calendar, Tag } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import Script from 'next/script';
 
+import JsonLd from '@/components/SEO/JsonLd';
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
 import { postQuery, postByIdQuery, allPostSlugsQuery, postPathsQuery } from '@/sanity/lib/queries';
@@ -18,6 +19,26 @@ const LatestBlogsSection = dynamic(() => import('@/components/Blogs/LatestBlogsS
 
 export const revalidate = 60;
 export const dynamicParams = true;
+
+/**
+ * The slug-variant fallback below used to fetch every post slug in the dataset
+ * on each miss. With `dynamicParams = true`, a bot hitting /blogs/<random> in a
+ * loop turned that into two uncached full-collection queries per request. The
+ * map is now cached and shared, so a flood of misses costs one query per hour.
+ */
+const getSlugIndex = unstable_cache(
+  async () => {
+    const all = (await client.fetch(allPostSlugsQuery)) as Array<{ _id: string; slug: string }>;
+    const index: Record<string, string> = {};
+    for (const p of all || []) {
+      const norm = (p.slug || '').toLowerCase().trim().replace(/[\s_]+/g, '-');
+      if (norm) index[norm] = p._id;
+    }
+    return index;
+  },
+  ['blog-slug-index'],
+  { revalidate: 3600, tags: ['posts'] },
+);
 
 async function getPost(rawSlug: string) {
   const decodedSlug = decodeURIComponent(rawSlug || '');
@@ -38,13 +59,10 @@ async function getPost(rawSlug: string) {
   // compare normalized slugs in memory and fetch by document _id
   if (!post) {
     try {
-      const allPosts = await client.fetch(allPostSlugsQuery);
-      const matched = (allPosts || []).find((p: { _id: string; slug: string }) => {
-        const pNorm = (p.slug || '').toLowerCase().trim().replace(/[\s_]+/g, '-');
-        return pNorm === normalizedSlug;
-      });
-      if (matched?._id) {
-        post = await client.fetch(postByIdQuery, { id: matched._id });
+      const slugIndex = await getSlugIndex();
+      const matchedId = slugIndex[normalizedSlug];
+      if (matchedId) {
+        post = await client.fetch(postByIdQuery, { id: matchedId });
       }
     } catch (err) {
       console.error('[getPost] Error in fallback slug resolution:', err);
@@ -134,17 +152,40 @@ const ptComponents = {
   },
   marks: {
     link: ({ value, children }: any) => {
-      const rawHref = value?.href || '';
-      const isInternal =
-        rawHref.startsWith('/') ||
-        rawHref.startsWith('#') ||
-        rawHref.includes('halatechnology.ae') ||
-        rawHref.includes('localhost');
+      const rawHref = typeof value?.href === 'string' ? value.href.trim() : '';
+      if (!rawHref) return <>{children}</>;
 
-      // Convert full halatechnology.ae URLs to relative paths for instant client-side routing
+      // Resolve the href properly instead of substring-matching the domain.
+      // `https://evil.com/?r=halatechnology.ae` contains our domain but is NOT
+      // internal, and `javascript:` / `data:` URLs must never be rendered.
       let targetHref = rawHref;
-      if (rawHref.includes('halatechnology.ae')) {
-        targetHref = rawHref.replace(/^https?:\/\/(www\.)?halatechnology\.ae/, '') || '/';
+      let isInternal = false;
+
+      if (rawHref.startsWith('/') || rawHref.startsWith('#')) {
+        isInternal = true;
+      } else {
+        let parsed: URL | null = null;
+        try {
+          parsed = new URL(rawHref);
+        } catch {
+          parsed = null;
+        }
+
+        // Reject anything that is not plain http(s) — blocks javascript:, data:, vbscript:
+        if (!parsed || (parsed.protocol !== 'https:' && parsed.protocol !== 'http:')) {
+          return <>{children}</>;
+        }
+
+        const host = parsed.hostname.toLowerCase();
+        isInternal =
+          host === 'halatechnology.ae' ||
+          host === 'www.halatechnology.ae' ||
+          host === 'localhost';
+
+        // Rewrite our own absolute URLs to relative paths for client-side routing
+        if (isInternal) {
+          targetHref = `${parsed.pathname}${parsed.search}${parsed.hash}` || '/';
+        }
       }
 
       if (isInternal) {
@@ -219,22 +260,35 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <div className="font-jakarta bg-[#111111] text-[#111] overflow-x-hidden min-h-screen flex flex-col">
-      <Script
+      <JsonLd
         id="blog-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            "headline": post.title,
-            "image": post.mainImage ? [urlForImage(post.mainImage)?.url()] : [],
-            "datePublished": post.publishedAt,
-            "author": [{
-              "@type": "Person",
-              "name": post.authorName || 'Hala Team',
-              "url": "https://halatechnology.ae"
-            }]
-          })
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: post.title,
+          image: post.mainImage ? [urlForImage(post.mainImage)?.url()] : [],
+          datePublished: post.publishedAt,
+          dateModified: post._updatedAt || post.publishedAt,
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': `https://halatechnology.ae/blogs/${cleanCanonicalSlug}`,
+          },
+          author: [
+            {
+              '@type': 'Person',
+              name: post.authorName || 'Hala Team',
+              url: 'https://halatechnology.ae',
+            },
+          ],
+          publisher: {
+            '@type': 'Organization',
+            name: 'Hala Technology',
+            url: 'https://halatechnology.ae',
+            logo: {
+              '@type': 'ImageObject',
+              url: 'https://halatechnology.ae/icon.png',
+            },
+          },
         }}
       />
       <Navbar />

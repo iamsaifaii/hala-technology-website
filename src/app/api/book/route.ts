@@ -1,9 +1,18 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
+import { getClientIp, hasDistributedRateLimit, rateLimit } from '@/lib/rate-limit';
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const MAX_BODY_BYTES = 8_192; // 8 KB — more than enough for a booking form
+
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+
+const SITE_HOSTNAME = 'halatechnology.ae';
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Allowed values for enum fields — prevents injection of arbitrary values
 const ALLOWED_SERVICES = [
@@ -22,40 +31,18 @@ const ALLOWED_BUDGETS = [
 ];
 const ALLOWED_SOURCES = ['Google Search', 'Social Media', 'Referral', 'Other'];
 
-// ─── Rate Limiting (in-memory, per-IP, sliding window) ───────────────────────
-const RATE_LIMIT_MAX      = 5;
-const RATE_LIMIT_WINDOW   = 15 * 60 * 1000; // 15 minutes in ms
-const ipRequestMap         = new Map<string, { count: number; resetAt: number }>();
-
-function isRateLimited(ip: string): boolean {
-  // Never rate-limit in local development
-  if (process.env.NODE_ENV === 'development') {
-    return false;
-  }
-
-  // If IP is localhost or unknown in production, still apply rate limit key
-  const safeIp = (ip === '127.0.0.1' || ip === '::1' || ip === 'localhost' || ip === 'unknown')
-    ? 'fallback_ip_slot'
-    : ip;
-
-  const now   = Date.now();
-  const entry = ipRequestMap.get(safeIp);
-
-  if (!entry || now > entry.resetAt) {
-    ipRequestMap.set(safeIp, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
-    return false;
-  }
-  if (entry.count >= RATE_LIMIT_MAX) return true;
-  entry.count++;
-  return false;
-}
-
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Strip HTML tags, trim, and enforce a max length. Returns '' for non-strings. */
+/** Strip HTML tags, collapse control characters, trim, enforce a max length. */
 function sanitize(val: unknown, maxLen = 200): string {
   if (typeof val !== 'string') return '';
-  return val.replace(/<[^>]*>/g, '').trim().slice(0, maxLen);
+  return val
+    .replace(/<[^>]*>/g, '')
+    // Strip control characters (incl. CR/LF) so nothing can forge structure in
+    // the outbound email subject or the webhook payload.
+    .replace(/[\u0000-\u001F\u007F]/g, ' ')
+    .trim()
+    .slice(0, maxLen);
 }
 
 /** Escapes special HTML characters to prevent HTML/template injection in email clients */
@@ -72,27 +59,116 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-/** Extract client IP prioritizing trusted platform headers */
-function getClientIp(request: Request): string {
-  const vercelIp = request.headers.get('x-vercel-ip-address');
-  if (vercelIp) return vercelIp.trim();
+/**
+ * The client sends a locale-formatted date such as "Mon, Jan 5, 2026".
+ * Accept it only if it parses to a real calendar date that is not in the past.
+ */
+function isValidBookingDate(value: string): boolean {
+  if (!value) return false;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return false;
 
-  const cfIp = request.headers.get('cf-connecting-ip');
-  if (cfIp) return cfIp.trim();
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
 
-  const xff = request.headers.get('x-forwarded-for');
-  if (xff) return xff.split(',')[0].trim();
+  // Reject anything before today, or absurdly far in the future (2 years).
+  const twoYearsOut = new Date(startOfToday);
+  twoYearsOut.setFullYear(twoYearsOut.getFullYear() + 2);
 
-  return request.headers.get('x-real-ip')?.trim() ?? 'unknown';
+  return parsed >= startOfToday && parsed <= twoYearsOut;
+}
+
+/** Read the body with a hard cap, without buffering an oversized payload first. */
+async function readBodyWithLimit(request: Request, maxBytes: number): Promise<string | null> {
+  const body = request.body;
+  if (!body) return '';
+
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let received = 0;
+
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (!value) continue;
+
+      received += value.byteLength;
+      if (received > maxBytes) {
+        await reader.cancel().catch(() => {});
+        return null; // signals "too large" — the stream is abandoned, not buffered
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock?.();
+  }
+
+  const merged = new Uint8Array(received);
+  let offset = 0;
+  for (const chunk of chunks) {
+    merged.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  return new TextDecoder().decode(merged);
+}
+
+/** Verify a reCAPTCHA token. Any failure, including a transport error, is a rejection. */
+async function verifyCaptcha(token: string, remoteIp: string): Promise<boolean> {
+  const secret = process.env.RECAPTCHA_SECRET_KEY;
+  if (!secret) return false;
+
+  const params = new URLSearchParams({ secret, response: token });
+  if (remoteIp && remoteIp !== 'unknown') params.append('remoteip', remoteIp);
+
+  // Bound the call so a hanging Google endpoint cannot stall the request.
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5_000);
+
+  try {
+    const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+      signal: controller.signal,
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      console.error(`[reCAPTCHA] siteverify returned ${res.status}`);
+      return false;
+    }
+
+    const data = (await res.json()) as { success?: boolean; hostname?: string };
+    if (!data.success) return false;
+
+    // Bind the token to our own property so a token minted elsewhere with the
+    // same site key cannot be replayed here. Localhost is allowed off-prod.
+    if (data.hostname) {
+      const host = data.hostname.toLowerCase();
+      const hostAllowed =
+        host === SITE_HOSTNAME ||
+        host.endsWith(`.${SITE_HOSTNAME}`) ||
+        (!isProduction && (host === 'localhost' || host === 'testkey.google.com'));
+
+      if (!hostAllowed) {
+        console.error(`[reCAPTCHA] Rejected token issued for hostname "${data.hostname}"`);
+        return false;
+      }
+    }
+
+    return true;
+  } catch (err) {
+    console.error('[reCAPTCHA] Verification failed (treated as rejection):', err);
+    return false;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 // ─── Resend client (initialised once at module load) ─────────────────────────
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
-
-const DEFAULT_PABBLY_WEBHOOK_URL =
-  'https://connect.pabbly.com/webhook-listener/webhook/IjU3NjMwNTZmMDYzNTA0M2Q1MjZjNTUzNiI_3D_pc/IjU3NjcwNTY4MDYzMjA0MzY1MjY0NTUzNjUxMzAi_pc';
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 // ─── Route Handlers ──────────────────────────────────────────────────────────
 
@@ -111,10 +187,23 @@ export async function POST(request: Request) {
   try {
     // 1. Rate limit
     const clientIp = getClientIp(request);
-    if (isRateLimited(clientIp)) {
+    const limit = await rateLimit(clientIp, {
+      max: RATE_LIMIT_MAX,
+      windowMs: RATE_LIMIT_WINDOW,
+      prefix: 'book',
+    });
+
+    if (limit.limited) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
-        { status: 429, headers: { 'Retry-After': '900' } },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(limit.retryAfterSeconds || 900),
+            'RateLimit-Limit': String(RATE_LIMIT_MAX),
+            'RateLimit-Remaining': '0',
+          },
+        },
       );
     }
 
@@ -124,26 +213,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unsupported media type' }, { status: 415 });
     }
 
-    // 3. Body size guard & parsing
-    const contentLength = Number(request.headers.get('content-length') ?? 0);
-    if (contentLength > MAX_BODY_BYTES) {
+    // 3. Body size guard — rejects by declared length first, then enforces the
+    //    cap while streaming so an oversized payload is never fully buffered.
+    const declaredLength = Number(request.headers.get('content-length') ?? 0);
+    if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
       return NextResponse.json({ error: 'Request body too large' }, { status: 413 });
     }
 
-    const rawBodyText = await request.text();
-    if (rawBodyText.length > MAX_BODY_BYTES) {
+    const rawBodyText = await readBodyWithLimit(request, MAX_BODY_BYTES);
+    if (rawBodyText === null) {
       return NextResponse.json({ error: 'Request body too large' }, { status: 413 });
     }
 
     // 4. Parse & sanitize input
-    let body: any;
+    let body: Record<string, unknown>;
     try {
       body = JSON.parse(rawBodyText);
     } catch {
       return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
     }
 
-    if (!body || typeof body !== 'object') {
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
@@ -158,7 +248,7 @@ export async function POST(request: Request) {
     const time          = sanitize(body.time,           20);
     const captchaToken  = typeof body.captchaToken === 'string' ? body.captchaToken : '';
 
-    // 4. Required-field validation
+    // 5. Required-field validation
     if (!name || !email || !date || !time) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
@@ -167,52 +257,55 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
     }
 
-    // 5. Enum allowlists
+    if (!isValidBookingDate(date)) {
+      return NextResponse.json(
+        { error: 'Please choose a valid booking date.' },
+        { status: 400 },
+      );
+    }
+
+    // 6. Enum allowlists (de-duplicated so the same value cannot be repeated)
     const rawServices = Array.isArray(body.services) ? body.services : [];
-    const services: string[] = rawServices
-      .filter((s: unknown) => typeof s === 'string' && ALLOWED_SERVICES.includes(s))
-      .slice(0, ALLOWED_SERVICES.length);
+    const services: string[] = [
+      ...new Set(
+        rawServices.filter(
+          (s: unknown): s is string => typeof s === 'string' && ALLOWED_SERVICES.includes(s),
+        ),
+      ),
+    ];
 
     const safeBudget        = ALLOWED_BUDGETS.includes(budget)        ? budget        : '';
     const safeHowDidYouHear = ALLOWED_SOURCES.includes(howDidYouHear) ? howDidYouHear : '';
 
-    // 6. reCAPTCHA verification
-    if (captchaToken) {
-      const primarySecret = process.env.RECAPTCHA_SECRET_KEY;
-
-      if (!primarySecret) {
-        // Secret not configured — log server-side, skip verification gracefully
-        console.warn('[reCAPTCHA] RECAPTCHA_SECRET_KEY env var is not set. Skipping verification.');
-      } else {
-        try {
-          const verifyParams = new URLSearchParams();
-          verifyParams.append('secret', primarySecret);
-          verifyParams.append('response', captchaToken);
-
-          const verifyRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: verifyParams.toString(),
-          });
-          const verifyData = await verifyRes.json();
-
-          if (!verifyData.success) {
-            // In development, skip blocking on reCAPTCHA failure to ease local testing.
-            // In production, always enforce reCAPTCHA.
-            if (process.env.NODE_ENV !== 'development') {
-              return NextResponse.json({ error: 'reCAPTCHA verification failed.' }, { status: 400 });
-            }
-            console.warn('[reCAPTCHA] Verification failed in dev mode — allowing request through for local testing.');
-          }
-        } catch (e) {
-          console.error('[reCAPTCHA] Siteverify network exception:', e);
-        }
+    // 7. reCAPTCHA — fail closed.
+    //    A missing secret in production is a misconfiguration, not a reason to
+    //    accept unverified traffic. Transport errors are rejections too.
+    if (isProduction) {
+      if (!process.env.RECAPTCHA_SECRET_KEY) {
+        console.error('[reCAPTCHA] RECAPTCHA_SECRET_KEY is not set — refusing to accept bookings.');
+        return NextResponse.json(
+          { error: 'Booking is temporarily unavailable. Please contact us directly.' },
+          { status: 503 },
+        );
       }
-    } else if (process.env.RECAPTCHA_SECRET_KEY && !captchaToken) {
-      return NextResponse.json({ error: 'reCAPTCHA token missing. Please complete the reCAPTCHA verification.' }, { status: 400 });
+
+      if (!captchaToken) {
+        return NextResponse.json(
+          { error: 'Please complete the reCAPTCHA verification.' },
+          { status: 400 },
+        );
+      }
+
+      if (!(await verifyCaptcha(captchaToken, clientIp))) {
+        return NextResponse.json({ error: 'reCAPTCHA verification failed.' }, { status: 400 });
+      }
+    } else if (captchaToken && process.env.RECAPTCHA_SECRET_KEY) {
+      // Outside production, verify when we can but never block local testing.
+      const ok = await verifyCaptcha(captchaToken, clientIp);
+      if (!ok) console.warn('[reCAPTCHA] Verification failed — allowed through (non-production).');
     }
 
-    // 7. Build safe email HTML with HTML entity escaping
+    // 8. Build safe email HTML with HTML entity escaping
     const escapedName          = escapeHtml(name);
     const escapedEmail         = escapeHtml(email);
     const escapedJobTitle      = escapeHtml(jobTitle);
@@ -247,8 +340,10 @@ export async function POST(request: Request) {
       </div>
     `;
 
-    // 8. Forward lead to Pabbly Connect Webhook
-    const pabblyWebhookUrl = process.env.PABBLY_WEBHOOK_URL || DEFAULT_PABBLY_WEBHOOK_URL;
+    // 9. Forward lead to the CRM webhook.
+    //    No hardcoded fallback: the endpoint is unauthenticated, so committing
+    //    it would let anyone inject leads straight into the sales pipeline.
+    const pabblyWebhookUrl = process.env.PABBLY_WEBHOOK_URL;
     if (pabblyWebhookUrl) {
       try {
         const pabblyPayload = {
@@ -270,28 +365,29 @@ export async function POST(request: Request) {
 
         const pabblyRes = await fetch(pabblyWebhookUrl, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(pabblyPayload),
+          signal: AbortSignal.timeout(8_000),
+          cache: 'no-store',
         });
 
         if (!pabblyRes.ok) {
           const errText = await pabblyRes.text().catch(() => '');
-          console.warn(`[booking] Pabbly webhook returned status ${pabblyRes.status}:`, errText);
-        } else {
-          console.log('[booking] Successfully forwarded lead to Pabbly Connect');
+          console.warn(`[booking] CRM webhook returned status ${pabblyRes.status}:`, errText);
         }
       } catch (pabblyErr) {
-        console.error('[booking] Failed to send lead to Pabbly Connect webhook:', pabblyErr);
+        console.error('[booking] Failed to forward lead to the CRM webhook:', pabblyErr);
       }
+    } else {
+      console.warn('[booking] PABBLY_WEBHOOK_URL is not set — lead was not forwarded to the CRM.');
     }
 
-    // 9. Send email via Resend
+    // 10. Send email via Resend
     if (resend) {
       const { error: sendError } = await resend.emails.send({
         from: 'Hala Booking <Contact@halatechnology.ae>',
-        to:   ['Contact@halatechnology.ae'],
+        to: ['Contact@halatechnology.ae'],
+        replyTo: email, // reply goes straight to the lead
         subject: `New Booking: ${name} — ${date} at ${time}`,
         html: htmlContent,
       });
@@ -302,10 +398,24 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({ success: true });
-
+    return NextResponse.json(
+      { success: true },
+      {
+        headers: {
+          'RateLimit-Limit': String(RATE_LIMIT_MAX),
+          'RateLimit-Remaining': String(limit.remaining),
+        },
+      },
+    );
   } catch (error) {
     console.error('[booking] Unhandled error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
+}
+
+if (isProduction && !hasDistributedRateLimit) {
+  console.warn(
+    '[booking] UPSTASH_REDIS_REST_URL/TOKEN are not configured. Rate limiting is ' +
+      'per-instance only and will not hold across serverless invocations.',
+  );
 }

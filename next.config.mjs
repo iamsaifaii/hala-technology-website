@@ -11,6 +11,8 @@ const CSP = [
   "default-src 'self'",
   // Scripts: self + inline (GTM/reCAPTCHA inject inline scripts) + Google services + LeadConnector / GoHighLevel + HubSpot
   `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''} https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://widgets.leadconnectorhq.com https://*.leadconnectorhq.com https://*.msgsndr.com https://*.filesafe.space https://*.highlevelcontent.com https://js-na2.hs-scripts.com https://*.hs-scripts.com https://*.hubspot.com`,
+  // Workers: Next.js and some third-party widgets spawn blob: workers
+  "worker-src 'self' blob:",
   // Styles: self + Google Fonts (inline styles needed for styled-jsx / framer-motion) + LeadConnector / GoHighLevel
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://widgets.leadconnectorhq.com https://*.leadconnectorhq.com https://*.msgsndr.com https://*.filesafe.space https://*.highlevelcontent.com",
   // Fonts: self + Google Fonts CDN + LeadConnector / GoHighLevel
@@ -19,11 +21,34 @@ const CSP = [
   "img-src 'self' data: blob: https://images.unsplash.com https://i.pravatar.cc https://ui-avatars.com https://*.unsplash.com https://cdn.sanity.io https://www.googletagmanager.com https://widgets.leadconnectorhq.com https://*.leadconnectorhq.com https://*.msgsndr.com https://*.filesafe.space https://assets.cdn.filesafe.space https://*.highlevelcontent.com https://storage.googleapis.com https://*.storage.googleapis.com https://*.hubspot.com https://*.hs-scripts.com https://*.hsforms.com",
   // Media: sounds/voice notes from LeadConnector / GoHighLevel
   "media-src 'self' data: blob: https://widgets.leadconnectorhq.com https://*.leadconnectorhq.com https://*.filesafe.space https://assets.cdn.filesafe.space https://*.highlevelcontent.com https://*.msgsndr.com",
-  // Frames: Google reCAPTCHA + LeadConnector / GoHighLevel + HubSpot
-  "frame-src 'self' https://www.google.com https://recaptcha.google.com https://widgets.leadconnectorhq.com https://*.leadconnectorhq.com https://*.msgsndr.com https://*.filesafe.space https://*.highlevelcontent.com https://*.hubspot.com",
+  // Frames: Google reCAPTCHA + GTM <noscript> iframe + LeadConnector / GoHighLevel + HubSpot
+  "frame-src 'self' https://www.google.com https://recaptcha.google.com https://www.googletagmanager.com https://widgets.leadconnectorhq.com https://*.leadconnectorhq.com https://*.msgsndr.com https://*.filesafe.space https://*.highlevelcontent.com https://*.hubspot.com",
   // Connections: self + Google services + Sanity API & WebSockets + GTM + LeadConnector / GoHighLevel + Sentry + HubSpot
   `connect-src 'self' https://www.google.com https://www.googleapis.com https://*.sanity.io wss://*.sanity.io https://www.googletagmanager.com https://analytics.google.com https://widgets.leadconnectorhq.com https://*.leadconnectorhq.com https://services.leadconnectorhq.com wss://*.leadconnectorhq.com https://*.msgsndr.com wss://*.msgsndr.com https://*.filesafe.space https://assets.cdn.filesafe.space https://*.highlevelcontent.com https://*.hubspot.com https://*.hs-scripts.com https://*.hsforms.com https://*.sentry.io${isDev ? ' https://registry.npmjs.org' : ''}`,
   // Block object/embed/base hijacking
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "upgrade-insecure-requests",
+].join('; ');
+
+/**
+ * Sanity Studio needs a looser policy than the public site: it evaluates GROQ
+ * dynamically ('unsafe-eval'), spawns blob: workers, and talks to Sanity's API
+ * and asset CDN. Applying the strict site CSP to /studio broke it in production.
+ * This policy is scoped to /studio only — the public site keeps the strict one.
+ */
+const STUDIO_CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://core.sanity-cdn.com https://*.sanity.io",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "img-src 'self' data: blob: https://cdn.sanity.io https://*.sanity.io https://lh3.googleusercontent.com",
+  "media-src 'self' data: blob: https://cdn.sanity.io",
+  "connect-src 'self' https://*.sanity.io wss://*.sanity.io https://*.sanity-cdn.com https://*.api.sanity.io",
+  "frame-src 'self' https://*.sanity.io",
+  "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -48,42 +73,37 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     minimumCacheTTL: 31536000,
+    // Every host here can be proxied through /_next/image, so each one is an
+    // exact hostname with a pathname constraint — no wildcard subdomains.
+    // Hosts that are only loaded by third-party widgets (filesafe.space,
+    // highlevelcontent.com) do not belong here; they go through CSP img-src.
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.pravatar.cc',
-      },
-      {
-        protocol: 'https',
         hostname: 'cdn.sanity.io',
+        pathname: '/images/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'www.dynamicleo.ae',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.filesafe.space',
-      },
-      {
-        protocol: 'https',
-        hostname: 'assets.cdn.filesafe.space',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.highlevelcontent.com',
+        pathname: '/**',
       },
     ],
   },
   async headers() {
     return [
       {
-        // Security headers on all application routes
-        source: '/:path*',
+        // Security headers on all application routes EXCEPT /studio.
+        // Next.js applies every matching rule, so a second CSP header on /studio
+        // would make the browser enforce the intersection of both policies and
+        // the studio would break anyway. This negative lookahead keeps them
+        // mutually exclusive.
+        source: '/((?!studio).*)',
         headers: [
           // In dev: report-only so CSP issues surface in the console without blocking.
           // In prod: fully enforced.
@@ -109,6 +129,22 @@ const nextConfig = {
           // Prevent cross-origin resource embedding
           { key: 'Cross-Origin-Resource-Policy',      value: 'same-site' },
           // Opt out of FLoC / Topics API tracking — merged into the Permissions-Policy above
+        ],
+      },
+      {
+        // Sanity Studio: relaxed CSP (needs unsafe-eval + blob: workers),
+        // still clickjacking-proof and never indexed.
+        source: '/studio/:path*',
+        headers: [
+          isDev
+            ? { key: 'Content-Security-Policy-Report-Only', value: STUDIO_CSP }
+            : { key: 'Content-Security-Policy', value: STUDIO_CSP },
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          { key: 'X-Frame-Options',           value: 'DENY' },
+          { key: 'X-Content-Type-Options',    value: 'nosniff' },
+          { key: 'Referrer-Policy',           value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Robots-Tag',              value: 'noindex, nofollow' },
+          { key: 'Cache-Control',             value: 'no-store, no-cache, must-revalidate, private' },
         ],
       },
       {
@@ -357,8 +393,8 @@ export default withSentryConfig(
     // Upload a larger set of source maps for prettier stack traces (increases build time)
     widenClientFileUpload: true,
 
-    // Transpiles SDK to be compatible with IE11 (increases bundle size)
-    transpileClientSDK: true,
+    // NOTE: `transpileClientSDK` was removed in Sentry v9 — it only inflated the
+    // bundle for IE11, which is long dead. Do not reintroduce it.
 
     // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
     // This can increase your server load as well as your hosting bill.

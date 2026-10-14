@@ -4,24 +4,13 @@ import { useState, useCallback, memo } from 'react';
 import Image from 'next/image';
 import { X, ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import Marquee from '@/components/Marquee/Marquee';
 
 const ContactCTA = dynamic(() => import('@/components/Home/ContactCTA'), {
   ssr: false,
 });
 
-// First 10 client logos — two rows of 5
-const clientLogos = [
-  '/Companies Logos/1.png',
-  '/Companies Logos/2.png',
-  '/Companies Logos/3.png',
-  '/Companies Logos/4.png',
-  '/Companies Logos/5.png',
-  '/Companies Logos/6.png',
-  '/Companies Logos/7.png',
-  '/Companies Logos/8.png',
-  '/Companies Logos/9.png',
-  '/Companies Logos/10.png',
-];
+const clientLogos = Array.from({ length: 20 }, (_, i) => `/Companies Logos/${i + 1}.png`);
 
 function HeroSectionComponent() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -77,7 +66,7 @@ function HeroSectionComponent() {
           {/* Email + CTA — stacked on mobile, side-by-side on sm+ */}
           <form
             onSubmit={handleEmailSubmit}
-            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full max-w-[460px] mt-6 mb-10 sm:mb-12"
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full max-w-[460px] mt-6 mb-12 sm:mb-16 md:mb-20"
           >
             <input
               type="email"
@@ -95,38 +84,23 @@ function HeroSectionComponent() {
             </button>
           </form>
 
-          {/* ── Logo Grid ── */}
-          <div className="w-full max-w-[680px]">
-            <p className="font-jakarta text-[10px] font-semibold uppercase tracking-[0.15em] text-white/35 mb-4 text-center">
+          {/* ── Logo Marquee ── */}
+          <div className="w-full max-w-[800px] mt-2 sm:mt-4">
+            <p className="font-jakarta text-[11px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-white/40 mb-6 sm:mb-7 text-center">
               Trusted by leading brands
             </p>
-
-            {/* Mobile: 2 col grid — shows 4 logos clean */}
-            {/* Tablet+: 5 col grid — shows all 10 */}
-            <div className="hidden sm:grid grid-cols-5 gap-x-4 gap-y-4 place-items-center">
+            <Marquee duration={40} className="[mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
               {clientLogos.map((src, i) => (
-                <div key={i} className="flex items-center justify-center h-8 w-full">
-                  <img
-                    src={src}
-                    alt={`Client ${i + 1}`}
-                    className="h-6 sm:h-7 w-auto max-w-[90px] object-contain filter brightness-0 invert opacity-50 hover:opacity-80 transition-opacity duration-300"
-                  />
-                </div>
+                <img
+                  key={src}
+                  src={src}
+                  alt={`Client ${i + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                  className="mr-10 sm:mr-14 h-7 sm:h-8 w-auto max-w-[110px] object-contain brightness-0 invert opacity-55 hover:opacity-85 transition-opacity"
+                />
               ))}
-            </div>
-
-            {/* Mobile only: 6 logos — 2 rows of 3 (3-col grid), bigger */}
-            <div className="grid sm:hidden grid-cols-3 gap-x-4 gap-y-5 place-items-center px-4">
-              {clientLogos.slice(0, 6).map((src, i) => (
-                <div key={i} className="flex items-center justify-center h-10 w-full">
-                  <img
-                    src={src}
-                    alt={`Client ${i + 1}`}
-                    className="h-8 w-auto max-w-[100px] object-contain filter brightness-0 invert opacity-55 hover:opacity-85 transition-opacity duration-300"
-                  />
-                </div>
-              ))}
-            </div>
+            </Marquee>
           </div>
 
         </div>

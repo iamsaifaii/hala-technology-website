@@ -2,6 +2,9 @@ import type { MetadataRoute } from 'next';
 
 import { client } from '@/sanity/lib/client';
 
+// Re-generate at most hourly; without this every crawl re-queried Sanity.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://halatechnology.ae';
   const now = new Date();
@@ -26,6 +29,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: '/case-studies', priority: 0.8, changeFrequency: 'monthly' as const },
     { url: '/careers', priority: 0.7, changeFrequency: 'monthly' as const },
     { url: '/blogs', priority: 0.9, changeFrequency: 'weekly' as const },
+    { url: '/faqs', priority: 0.6, changeFrequency: 'monthly' as const },
+    { url: '/privacy-policy', priority: 0.3, changeFrequency: 'yearly' as const },
+    { url: '/terms-and-conditions', priority: 0.3, changeFrequency: 'yearly' as const },
+    { url: '/cookie-policy', priority: 0.3, changeFrequency: 'yearly' as const },
   ];
 
   const staticSitemap = staticRoutes.map((r) => ({

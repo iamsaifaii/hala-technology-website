@@ -5,6 +5,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import Script from 'next/script';
 import LocalBusinessSchema from '@/components/SEO/LocalBusinessSchema';
 import CookieBanner from '@/components/CookieBanner/CookieBanner';
+import ConsentGatedScripts from '@/components/Analytics/ConsentGatedScripts';
 import SmoothScroll from '@/components/SmoothScroll/SmoothScroll';
 import './globals.css';
 
@@ -67,9 +68,10 @@ export const metadata: Metadata = {
       { url: '/apple-icon.png' },
     ],
   },
-  alternates: {
-    canonical: BASE_URL,
-  },
+  // NOTE: no `alternates.canonical` here on purpose. A canonical set on the root
+  // layout is inherited by every page that does not override it, which silently
+  // made /faqs, /privacy-policy, /cookie-policy and /terms-and-conditions all
+  // declare the homepage as their canonical. Each page declares its own.
   verification: {
     google: 'iqVtPQGgcUg2102iIvUj2QseZ2d6Y7GNkRnbqLxQ678',
   },
@@ -83,6 +85,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${plusJakarta.variable}`}>
       <head>
+        {/*
+          Consent Mode v2 defaults. This MUST run before GTM so that no tag can
+          write storage before the visitor has chosen. CookieBanner flips these
+          to "granted" on Accept via gtag('consent','update', …).
+        */}
+        <Script
+          id="consent-default"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+var stored=null;try{stored=localStorage.getItem('hala_cookie_consent');}catch(e){}
+var g=stored==='accepted'?'granted':'denied';
+gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:g,personalization_storage:g,functionality_storage:'granted',security_storage:'granted',wait_for_update:500});`,
+          }}
+        />
         <Script
           id="gtm-script"
           strategy="afterInteractive"
@@ -116,29 +133,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <Analytics />
         <SpeedInsights />
         <CookieBanner />
-        
-        {/* GoHighLevel Chat Widget */}
-        <Script
-          src="https://widgets.leadconnectorhq.com/loader.js"
-          data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
-          data-widget-id="6a29d9d08eebf2dcc67d51e9"
-          strategy="lazyOnload"
-        />
 
-        {/* HubSpot Embed Script */}
-        <Script
-          id="hs-script-loader"
-          src="//js-na2.hs-scripts.com/247325874.js"
-          strategy="afterInteractive"
-        />
-
-        {/* GoHighLevel / LeadConnector External Tracking */}
-        <Script
-          id="leadconnector-tracking"
-          src="https://link.msgsndr.com/js/external-tracking.js"
-          data-tracking-id="tk_e6fce949eb71496dba81405198a3ca81"
-          strategy="afterInteractive"
-        />
+        {/* Marketing/analytics vendors — injected only after consent is granted */}
+        <ConsentGatedScripts />
       </body>
     </html>
   );

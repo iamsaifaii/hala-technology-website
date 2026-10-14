@@ -12,7 +12,7 @@ interface BrandingShowcaseProps {
 
 export default function BrandingShowcase({
   mainImageDesktop = '/Branding Section Images/Bradningimagedesktopview.png',
-  mainImageMobile = '/Branding Section Images/BRANDING IMAGE phoneview.png',
+  mainImageMobile = '/Branding Section Images/branding-image-phoneview.png',
   gridImage1 = '/Branding Section Images/2.png',
   gridImage2 = '/Branding Section Images/17.png',
   desktopObjectFit = 'cover',
@@ -37,6 +37,8 @@ export default function BrandingShowcase({
                 <img 
                   src={mainImageDesktop} 
                   alt="Brand Identity Desktop" 
+                  loading="lazy"
+                  decoding="async"
                   className="max-w-full max-h-full rounded-[2rem] md:rounded-[3rem] shadow-xl"
                 />
               ) : (
@@ -56,6 +58,8 @@ export default function BrandingShowcase({
                 <img 
                   src={mainImageMobile} 
                   alt="Brand Identity Mobile" 
+                  loading="lazy"
+                  decoding="async"
                   className="max-w-full max-h-full rounded-[2rem] md:rounded-[3rem] shadow-xl"
                 />
               ) : (

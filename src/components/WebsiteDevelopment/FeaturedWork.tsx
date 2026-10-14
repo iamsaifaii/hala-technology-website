@@ -23,7 +23,7 @@ const projects = [
     id: 3,
     title: 'Rodeo Drive Dubai',
     badge: 'ENTERTAINMENT',
-    image: '/website mockup images/rodeo .jpeg',
+    image: '/website mockup images/rodeo.jpeg',
     link: 'https://www.rodeodrivedubai.com/',
   },
   {
@@ -134,6 +134,8 @@ export default function FeaturedWork() {
                 <img
                   src={client.src}
                   alt={client.alt}
+                  loading="lazy"
+                  decoding="async"
                   className="h-8 sm:h-10 md:h-12 w-auto object-contain max-w-[120px] filter grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100"
                 />
               </div>

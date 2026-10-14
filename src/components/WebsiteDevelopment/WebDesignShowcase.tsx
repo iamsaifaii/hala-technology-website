@@ -12,9 +12,9 @@ const showcaseProjects = [
     category: 'Entertainment & Nightlife Venue',
     description: 'A dynamic, immersive web experience engineered for Dubai premier nightlife & dining destination with seamless booking and live event showcase.',
     url: 'https://www.rodeodrivedubai.com/',
-    desktopImg: '/website mockup images/rodeo .jpeg',
-    tabletImg: '/website mockup images/rodeo .jpeg',
-    mobileImg: '/website mockup images/rodeo .jpeg',
+    desktopImg: '/website mockup images/rodeo.jpeg',
+    tabletImg: '/website mockup images/rodeo.jpeg',
+    mobileImg: '/website mockup images/rodeo.jpeg',
     metrics: [
       { label: 'Speed Score', val: '98/100' },
       { label: 'Engagement', val: '+280%' },

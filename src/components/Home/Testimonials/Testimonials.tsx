@@ -1,174 +1,204 @@
 'use client';
 
-import { useState, memo } from 'react';
-import { motion } from 'framer-motion';
-import Image from 'next/image';
+import { useState, useRef, memo } from 'react';
+import { TrendingUp, Building2, Rocket, Play, Pause, type LucideIcon } from 'lucide-react';
 
-const testimonialsRow1 = [
+type Testimonial = {
+  company: string;
+  Icon: LucideIcon;
+  iconColor: string;
+  quote: string;
+  name: string;
+  role: string;
+  services?: string[];
+};
+
+const TESTIMONIALS: Testimonial[] = [
   {
-    quote: "Exceeded our expectations with innovative designs that brought our vision to life - a truly remarkable creative agency.",
-    name: "Samantha Johnson",
-    title: "CEO and Co-founder of ABC Company",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80"
+    company: 'Scalify',
+    Icon: TrendingUp,
+    iconColor: 'text-[#007FFF]',
+    quote:
+      '“Hala Technology built our website from the ground up and now runs our SEO, marketing, and graphic design. They feel like an extension of our own team — fast, reliable, and always focused on growth. Our online presence has never looked or performed better.”',
+    name: 'Scalify Team',
+    role: 'Founder, Scalify',
+    services: ['Website', 'SEO', 'Marketing', 'Graphic Design'],
   },
   {
-    quote: "Their ability to capture our brand essence in every project is unparalleled - an invaluable creative collaborator.",
-    name: "Isabella Rodriguez",
-    title: "CEO and Co-founder of ABC Company",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+    company: 'XYZ Corp',
+    Icon: Building2,
+    iconColor: 'text-[#111111]',
+    quote:
+      '“Working with Hala has been transformative. They don’t just create content; they create experiences that resonate deeply with our audience and bring in real, measurable results.”',
+    name: 'Michael Chen',
+    role: 'Marketing Director',
   },
   {
-    quote: "Creative geniuses who listen, understand, and craft captivating visuals - an agency that truly understands our needs.",
-    name: "Gabrielle Williams",
-    title: "CEO and Co-founder of ABC Company",
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80"
+    company: 'Startup Inc',
+    Icon: Rocket,
+    iconColor: 'text-[#0066CC]',
+    quote:
+      '“The attention to detail and strategic foresight they bring to the table is unmatched. From concept to launch, every campaign was executed with clarity and precision.”',
+    name: 'Sarah Jenkins',
+    role: 'Founder',
   },
-  {
-    quote: "A refreshing and imaginative agency that consistently delivers exceptional results - highly recommended for any project.",
-    name: "Victoria Thompson",
-    title: "CEO and Co-founder of ABC Company",
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"
-  }
 ];
 
-const testimonialsRow2 = [
+// Fixed 4 video reel slots (9:16 aspect ratio)
+const VIDEO_TESTIMONIALS = [
   {
-    quote: "Their team's artistic flair and strategic approach resulted in remarkable campaigns - a reliable creative partner.",
-    name: "John Peter",
-    title: "CEO and Co-founder of ABC Company",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+    id: 1,
+    client: 'Scalify',
+    subtitle: 'Website & Growth Story',
+    src: '',
+    poster: '',
   },
   {
-    quote: "From concept to execution, their creativity knows no bounds - a game-changer for our brand's success.",
-    name: "Natalie Martinez",
-    title: "CEO and Co-founder of ABC Company",
-    image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=150&q=80"
+    id: 2,
+    client: 'Fintech Scaleup',
+    subtitle: 'Brand & Marketing Impact',
+    src: '',
+    poster: '',
   },
   {
-    quote: "Working with Hala has been transformative. They don't just create content; they create experiences that resonate deeply.",
-    name: "Michael Chen",
-    title: "Marketing Director at XYZ Corp",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
+    id: 3,
+    client: 'E-commerce Brand',
+    subtitle: 'Full-Funnel CRO & Ads',
+    src: '',
+    poster: '',
   },
   {
-    quote: "The attention to detail and strategic foresight they bring to the table is unmatched in the entire creative industry.",
-    name: "Sarah Jenkins",
-    title: "Founder of Startup Inc",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80"
-  }
+    id: 4,
+    client: 'Global Logistics',
+    subtitle: 'SEO & Organic Growth',
+    src: '',
+    poster: '',
+  },
 ];
 
-// Duplicate arrays for seamless infinite loop
-const marquee1 = [...testimonialsRow1, ...testimonialsRow1];
-const marquee2 = [...testimonialsRow2, ...testimonialsRow2];
+const initials = (name: string) =>
+  name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
-const QuoteIcon = memo(function QuoteIcon() {
-  return (
-    <svg className="w-7 h-7 md:w-[45px] md:h-[45px]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10 11V17H4V11H7.5C7.5 9.5 6.5 8.5 5 8.5V6C7.5 6 10 7.5 10 11ZM20 11V17H14V11H17.5C17.5 9.5 16.5 8.5 15 8.5V6C17.5 6 20 7.5 20 11Z" fill="#FFFFFF"/>
-    </svg>
-  );
-});
+function VideoReelCard({ item }: { item: (typeof VIDEO_TESTIMONIALS)[0] }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-export default function Testimonials() {
+  const togglePlay = () => {
+    if (!videoRef.current || !item.src) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {});
+    }
+  };
+
   return (
-    <section className="w-full bg-white py-10 md:py-20 overflow-hidden flex flex-col items-center">
-      
-      {/* Header Container */}
-      <div className="flex flex-col items-center text-center max-w-4xl mx-auto px-4 sm:px-6 mb-8 md:mb-16">
-        {/* Heading */}
-        <h2 className="font-jakarta text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-bold text-[#111111] leading-[1.15] tracking-tight">
-          Words of praise from others <br className="hidden md:block" />
-          about our presence.
-        </h2>
+    <div
+      onClick={togglePlay}
+      className="group relative aspect-[9/16] w-full rounded-2xl md:rounded-3xl overflow-hidden bg-[#111111] border border-[#E5E9F0] shadow-[0_2px_12px_rgba(0,0,0,0.04)] select-none cursor-pointer"
+    >
+      {item.src ? (
+        <video
+          ref={videoRef}
+          src={item.src}
+          poster={item.poster}
+          playsInline
+          loop
+          preload="none"
+          onEnded={() => setIsPlaying(false)}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1f242c] via-[#111111] to-[#0a0a0a]" />
+      )}
+
+      {/* Play/Pause Overlay */}
+      <div
+        className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${
+          isPlaying ? 'opacity-0 group-hover:opacity-100 bg-black/30' : 'opacity-100 bg-black/20'
+        }`}
+      >
+        <span className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center transition-transform duration-200 group-hover:scale-110">
+          {isPlaying ? (
+            <Pause className="w-5 h-5 text-white fill-white" />
+          ) : (
+            <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+          )}
+        </span>
       </div>
 
-      {/* Marquee Section */}
-      <div className="w-full flex flex-col gap-4 md:gap-8 relative overflow-hidden pb-4 md:pb-8">
-        
-        {/* Row 1 - Moving Left */}
-        <div className="flex w-fit">
-          <motion.div
-            className="flex gap-4 md:gap-8 pr-4 md:pr-8 [will-change:transform]"
-            animate={{ x: "-50%" }}
-            transition={{
-              duration: 40,
-              repeat: Infinity,
-              ease: "linear",
-              repeatType: "loop"
-            }}
-            style={{ transform: 'translateZ(0)' }}
-          >
-            {marquee1.map((testimonial, idx) => (
-              <TestimonialCard key={`row1-${idx}`} {...testimonial} />
-            ))}
-          </motion.div>
-        </div>
+      {/* Bottom Info */}
+      <div className="absolute inset-x-0 bottom-0 p-3.5 sm:p-4 bg-gradient-to-t from-black/85 via-black/40 to-transparent text-white">
+        <p className="text-[13px] sm:text-[14px] font-semibold leading-tight">{item.client}</p>
+        <p className="text-[11px] sm:text-[12px] text-white/70 mt-0.5">{item.subtitle}</p>
+      </div>
+    </div>
+  );
+}
 
-        {/* Row 2 - Moving Right */}
-        <div className="flex w-fit">
-          <motion.div
-            className="flex gap-4 md:gap-8 pr-4 md:pr-8 [will-change:transform]"
-            initial={{ x: "-50%" }}
-            animate={{ x: "0%" }}
-            transition={{
-              duration: 45,
-              repeat: Infinity,
-              ease: "linear",
-              repeatType: "loop"
-            }}
-            style={{ transform: 'translateZ(0)' }}
-          >
-            {marquee2.map((testimonial, idx) => (
-              <TestimonialCard key={`row2-${idx}`} {...testimonial} />
-            ))}
-          </motion.div>
+function Testimonials() {
+  return (
+    <section className="w-full bg-white py-16 md:py-24 px-4 sm:px-6 font-jakarta text-[#111111]">
+      {/* Header */}
+      <div className="text-center mb-10 md:mb-14">
+        <h2 className="font-bold text-3xl sm:text-4xl md:text-5xl tracking-tight">Loved by Brands Like Yours</h2>
+        <p className="mt-3 text-[#555555] text-sm md:text-base">
+          See how businesses are growing with Hala Technology.
+        </p>
+      </div>
+
+      {/* Review Cards (3-column layout matching reference) */}
+      <div className="max-w-[1100px] mx-auto grid md:grid-cols-3 bg-white border border-[#E5E9F0] rounded-3xl shadow-[0_2px_12px_rgba(0,0,0,0.04)] divide-y md:divide-y-0 md:divide-x divide-[#EEF1F5]">
+        {TESTIMONIALS.map(({ company, Icon, iconColor, quote, name, role, services }) => (
+          <article key={company} className="p-7 md:p-8 flex flex-col">
+            <div className="flex items-center gap-2 mb-5">
+              <Icon className={`w-4 h-4 ${iconColor}`} strokeWidth={2.5} />
+              <h3 className="font-bold text-[15px]">{company}</h3>
+            </div>
+
+            {services && (
+              <ul className="flex flex-wrap gap-1.5 mb-4">
+                {services.map((s) => (
+                  <li key={s} className="text-[11px] font-semibold text-[#0066CC] bg-[#EBF5FF] px-2.5 py-1 rounded-full">
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <p className="text-[14px] leading-relaxed text-[#444444] mb-8">{quote}</p>
+
+            <div className="mt-auto flex items-center gap-3">
+              <span className="w-10 h-10 rounded-full bg-[#F3F5F8] border border-[#E5E9F0] flex items-center justify-center text-[13px] font-semibold text-[#555555]">
+                {initials(name)}
+              </span>
+              <div>
+                <p className="text-[14px] font-semibold">{name}</p>
+                <p className="text-[12px] text-[#888888]">{role}</p>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {/* Video Testimonials — Fixed 4 Grid (No Marquee) */}
+      <div className="max-w-[1100px] mx-auto mt-16 md:mt-20">
+        <h3 className="text-center font-bold text-xl md:text-2xl tracking-tight mb-8">
+          Hear it from our clients
+        </h3>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {VIDEO_TESTIMONIALS.map((item) => (
+            <VideoReelCard key={item.id} item={item} />
+          ))}
         </div>
-        
       </div>
     </section>
   );
 }
 
-const TestimonialCard = memo(function TestimonialCard({ quote, name, title, image }: { quote: string, name: string, title: string, image: string }) {
-  const [imgSrc, setImgSrc] = useState(image);
-
-  return (
-    <div className="w-[270px] sm:w-[300px] md:w-[440px] shrink-0 bg-[#111111] border border-[#333333] rounded-[20px] md:rounded-[32px] p-5 md:p-10 flex flex-col gpu-accelerated">
-      
-      {/* Quote Icon */}
-      <div className="mb-4 md:mb-6">
-        <QuoteIcon />
-      </div>
-
-      {/* Quote Text */}
-      <p className="font-jakarta text-[13.5px] sm:text-[14.5px] md:text-[18px] text-white/90 leading-[1.5] md:leading-[1.6] font-medium mb-6 md:mb-12 flex-grow">
-        {quote}
-      </p>
-
-      {/* User Info */}
-      <div className="flex items-center gap-3 md:gap-4 mt-auto">
-        <div className="w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden bg-gray-200 shrink-0 border-2 border-white shadow-sm flex items-center justify-center relative">
-          <Image 
-            src={imgSrc} 
-            alt={name} 
-            width={56}
-            height={56}
-            className="w-full h-full object-cover" 
-            onError={() => setImgSrc(`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=007FFF&color=fff`)}
-            unoptimized={imgSrc.startsWith('http')}
-          />
-        </div>
-        <div className="flex flex-col">
-          <h4 className="font-jakarta font-bold text-white text-[13.5px] md:text-[16px]">
-            {name}
-          </h4>
-          <span className="font-jakarta text-[11.5px] md:text-[14px] text-white/60 font-medium mt-0.5">
-            {title}
-          </span>
-        </div>
-      </div>
-      
-    </div>
-  );
-});
+export default memo(Testimonials);
