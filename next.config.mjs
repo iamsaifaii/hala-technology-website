@@ -158,7 +158,7 @@ const nextConfig = {
       },
       {
         // Immutable cache control for static assets & images
-        source: '/:path*\\.(png|jpg|jpeg|webp|avif|svg|ico|woff|woff2)',
+        source: '/:path*\\.(png|jpg|jpeg|webp|avif|svg|ico|woff|woff2|mp4|webm)',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
         ],
