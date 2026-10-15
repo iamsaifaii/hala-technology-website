@@ -134,7 +134,19 @@ function ClientVideo({ item }: { item: typeof VIDEO_TESTIMONIAL }) {
   );
 }
 
-function Testimonials() {
+type TestimonialsProps = {
+  /**
+   * Render the "Hear it from our clients" video block.
+   *
+   * Defaults to FALSE on purpose. This section is reused on 13 pages
+   * (services, branding, about, …) and the client video belongs only on the
+   * home landing page. Opting in explicitly means adding Testimonials to a new
+   * page can never surface the video by accident.
+   */
+  showVideo?: boolean;
+};
+
+function Testimonials({ showVideo = false }: TestimonialsProps) {
   return (
     <section className="w-full bg-white py-16 md:py-24 px-4 sm:px-6 font-jakarta text-[#111111]">
       {/* Header */}
@@ -179,14 +191,17 @@ function Testimonials() {
         ))}
       </div>
 
-      {/* Client Video Testimonial — single landscape (16:9) */}
-      <div className="max-w-[900px] mx-auto mt-16 md:mt-20">
-        <h3 className="text-center font-bold text-xl md:text-2xl tracking-tight mb-8">
-          Hear it from our clients
-        </h3>
+      {/* Client Video Testimonial — single landscape (16:9).
+          Home landing page only; see the showVideo prop. */}
+      {showVideo && (
+        <div className="max-w-[900px] mx-auto mt-16 md:mt-20">
+          <h3 className="text-center font-bold text-xl md:text-2xl tracking-tight mb-8">
+            Hear it from our clients
+          </h3>
 
-        <ClientVideo item={VIDEO_TESTIMONIAL} />
-      </div>
+          <ClientVideo item={VIDEO_TESTIMONIAL} />
+        </div>
+      )}
     </section>
   );
 }
