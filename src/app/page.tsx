@@ -71,7 +71,10 @@ export default function Home() {
         <WhyChooseHala />
         <OurJourney />
         <HomeWorkflow />
-        <CustomTestimonials />
+        {/* showVideo is enabled here only — the client video is exclusive to
+            the home landing page. Every other page renders the text
+            testimonials without it. */}
+        <CustomTestimonials showVideo />
         <LatestBlogsSection />
         <ContactConsultation contained={true} />
       </main>
