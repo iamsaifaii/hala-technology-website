@@ -44,97 +44,91 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
-// Fixed 4 video reel slots (9:16 aspect ratio)
-const VIDEO_TESTIMONIALS = [
-  {
-    id: 1,
-    client: 'Scalify',
-    subtitle: 'Website & Growth Story',
-    src: '',
-    poster: '',
-  },
-  {
-    id: 2,
-    client: 'Fintech Scaleup',
-    subtitle: 'Brand & Marketing Impact',
-    src: '',
-    poster: '',
-  },
-  {
-    id: 3,
-    client: 'E-commerce Brand',
-    subtitle: 'Full-Funnel CRO & Ads',
-    src: '',
-    poster: '',
-  },
-  {
-    id: 4,
-    client: 'Global Logistics',
-    subtitle: 'SEO & Organic Growth',
-    src: '',
-    poster: '',
-  },
-];
+// Single landscape (16:9) client testimonial video.
+const VIDEO_TESTIMONIAL = {
+  src: '/videos/client-testimonial-benjamin-sarah.mp4',
+  poster: '',
+  client: 'Benjamin & Sarah',
+  subtitle: 'Honest words from people we’ve been building with',
+};
 
 const initials = (name: string) =>
   name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
-function VideoReelCard({ item }: { item: (typeof VIDEO_TESTIMONIALS)[0] }) {
+function ClientVideo({ item }: { item: typeof VIDEO_TESTIMONIAL }) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const togglePlay = () => {
-    if (!videoRef.current || !item.src) return;
-    if (isPlaying) {
-      videoRef.current.pause();
-      setIsPlaying(false);
+    const video = videoRef.current;
+    if (!video || !item.src) return;
+
+    if (video.paused) {
+      video.play().then(() => {
+        setIsPlaying(true);
+        setHasStarted(true);
+      }).catch(() => {});
     } else {
-      videoRef.current
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => {});
+      video.pause();
+      setIsPlaying(false);
     }
   };
 
   return (
-    <div
-      onClick={togglePlay}
-      className="group relative aspect-[9/16] w-full rounded-2xl md:rounded-3xl overflow-hidden bg-[#111111] border border-[#E5E9F0] shadow-[0_2px_12px_rgba(0,0,0,0.04)] select-none cursor-pointer"
-    >
-      {item.src ? (
-        <video
-          ref={videoRef}
-          src={item.src}
-          poster={item.poster}
-          playsInline
-          loop
-          preload="none"
-          onEnded={() => setIsPlaying(false)}
-          className="w-full h-full object-cover"
-        />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1f242c] via-[#111111] to-[#0a0a0a]" />
+    <div className="relative w-full aspect-video rounded-2xl md:rounded-3xl overflow-hidden bg-[#111111] border border-[#E5E9F0] shadow-[0_4px_24px_rgba(0,0,0,0.08)] group">
+      <video
+        ref={videoRef}
+        src={item.src}
+        poster={item.poster || undefined}
+        playsInline
+        // 5.5 MB file — only fetch metadata (and the first frame) until the
+        // visitor actually chooses to watch.
+        preload="metadata"
+        // Native controls once it is running, so a ~2 minute testimonial can be
+        // scrubbed, paused and volume-adjusted properly.
+        controls={hasStarted}
+        controlsList="nodownload"
+        onPlay={() => { setIsPlaying(true); setHasStarted(true); }}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => { setIsPlaying(false); setHasStarted(false); }}
+        className="w-full h-full object-cover"
+      />
+
+      {/* Click-to-play overlay — hidden once playback has begun so it never
+          sits on top of the native controls. */}
+      {!hasStarted && (
+        <button
+          type="button"
+          onClick={togglePlay}
+          aria-label={`Play video testimonial from ${item.client}`}
+          className="absolute inset-0 flex items-center justify-center bg-black/25 hover:bg-black/35 transition-colors cursor-pointer"
+        >
+          <span className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center transition-transform duration-200 group-hover:scale-110">
+            {isPlaying ? (
+              <Pause className="w-7 h-7 text-white fill-white" />
+            ) : (
+              <Play className="w-7 h-7 text-white fill-white ml-1" />
+            )}
+          </span>
+        </button>
       )}
 
-      {/* Play/Pause Overlay */}
+      {/* Caption sits TOP-left on purpose: this video has burned-in subtitles
+          along the bottom edge, and the native controls occupy that strip once
+          playback starts. Top-right is taken by the in-video Hala watermark.
+          Fades out during playback so nothing competes with the footage. */}
       <div
-        className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${
-          isPlaying ? 'opacity-0 group-hover:opacity-100 bg-black/30' : 'opacity-100 bg-black/20'
+        className={`absolute inset-x-0 top-0 p-4 sm:p-5 pb-10 bg-gradient-to-b from-black/80 via-black/35 to-transparent text-white pointer-events-none transition-opacity duration-300 ${
+          hasStarted ? 'opacity-0' : 'opacity-100'
         }`}
       >
-        <span className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center transition-transform duration-200 group-hover:scale-110">
-          {isPlaying ? (
-            <Pause className="w-5 h-5 text-white fill-white" />
-          ) : (
-            <Play className="w-5 h-5 text-white fill-white ml-0.5" />
-          )}
-        </span>
-      </div>
-
-      {/* Bottom Info */}
-      <div className="absolute inset-x-0 bottom-0 p-3.5 sm:p-4 bg-gradient-to-t from-black/85 via-black/40 to-transparent text-white">
-        <p className="text-[13px] sm:text-[14px] font-semibold leading-tight">{item.client}</p>
-        <p className="text-[11px] sm:text-[12px] text-white/70 mt-0.5">{item.subtitle}</p>
+        <p className="text-[15px] sm:text-[17px] font-semibold leading-tight drop-shadow-sm">
+          {item.client}
+        </p>
+        <p className="text-[12px] sm:text-[14px] text-white/80 mt-1 max-w-[80%] leading-snug">
+          {item.subtitle}
+        </p>
       </div>
     </div>
   );
@@ -185,17 +179,13 @@ function Testimonials() {
         ))}
       </div>
 
-      {/* Video Testimonials — Fixed 4 Grid (No Marquee) */}
-      <div className="max-w-[1100px] mx-auto mt-16 md:mt-20">
+      {/* Client Video Testimonial — single landscape (16:9) */}
+      <div className="max-w-[900px] mx-auto mt-16 md:mt-20">
         <h3 className="text-center font-bold text-xl md:text-2xl tracking-tight mb-8">
           Hear it from our clients
         </h3>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {VIDEO_TESTIMONIALS.map((item) => (
-            <VideoReelCard key={item.id} item={item} />
-          ))}
-        </div>
+        <ClientVideo item={VIDEO_TESTIMONIAL} />
       </div>
     </section>
   );
