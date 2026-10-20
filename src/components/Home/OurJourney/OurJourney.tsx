@@ -1,33 +1,12 @@
 'use client';
 
-const logosRow1 = [
-  { id: 1,  src: '/Companies Logos/1.png',  alt: 'Company Logo 1' },
-  { id: 2,  src: '/Companies Logos/2.png',  alt: 'Company Logo 2' },
-  { id: 3,  src: '/Companies Logos/3.png',  alt: 'Company Logo 3' },
-  { id: 4,  src: '/Companies Logos/4.png',  alt: 'Company Logo 4' },
-  { id: 5,  src: '/Companies Logos/5.png',  alt: 'Company Logo 5' },
-  { id: 6,  src: '/Companies Logos/6.png',  alt: 'Company Logo 6' },
-  { id: 7,  src: '/Companies Logos/7.png',  alt: 'Company Logo 7' },
-  { id: 8,  src: '/Companies Logos/8.png',  alt: 'Company Logo 8' },
-  { id: 9,  src: '/Companies Logos/9.png',  alt: 'Company Logo 9' },
-  { id: 10, src: '/Companies Logos/10.png', alt: 'Company Logo 10' },
-];
+import { CLIENT_LOGOS } from '@/lib/client-logos';
 
-const logosRow2 = [
-  { id: 11, src: '/Companies Logos/11.png', alt: 'Company Logo 11' },
-  { id: 12, src: '/Companies Logos/12.png', alt: 'Company Logo 12' },
-  { id: 13, src: '/Companies Logos/13.png', alt: 'Company Logo 13' },
-  { id: 14, src: '/Companies Logos/14.png', alt: 'Company Logo 14' },
-  { id: 15, src: '/Companies Logos/15.png', alt: 'Company Logo 15' },
-  { id: 16, src: '/Companies Logos/16.png', alt: 'Company Logo 16' },
-  { id: 17, src: '/Companies Logos/17.png', alt: 'Company Logo 17' },
-  { id: 18, src: '/Companies Logos/18.png', alt: 'Company Logo 18' },
-  { id: 19, src: '/Companies Logos/19.png', alt: 'Company Logo 19' },
-  { id: 20, src: '/Companies Logos/20.png', alt: 'Company Logo 20' },
-];
+// Two independent marquee rows. Each row loops on its own, so the halves do not
+// need to be equal length — 15 logos split 8 / 7.
+const logosRow1 = CLIENT_LOGOS.slice(0, 8);
+const logosRow2 = CLIENT_LOGOS.slice(8);
 
-// 4 repetitions split into two 50% halves. Because each card has an exact fixed width,
-// translating by exactly -50% is mathematically identical to 0%, giving a 100% seamless loop.
 const row1 = [...logosRow1, ...logosRow1, ...logosRow1, ...logosRow1];
 const row2 = [...logosRow2, ...logosRow2, ...logosRow2, ...logosRow2];
 

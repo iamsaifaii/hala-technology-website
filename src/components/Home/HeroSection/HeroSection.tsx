@@ -5,12 +5,11 @@ import Image from 'next/image';
 import { X, ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Marquee from '@/components/Marquee/Marquee';
+import { CLIENT_LOGOS } from '@/lib/client-logos';
 
 const ContactCTA = dynamic(() => import('@/components/Home/ContactCTA'), {
   ssr: false,
 });
-
-const clientLogos = Array.from({ length: 20 }, (_, i) => `/Companies Logos/${i + 1}.png`);
 
 function HeroSectionComponent() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -90,11 +89,11 @@ function HeroSectionComponent() {
               Trusted by leading brands
             </p>
             <Marquee duration={40} className="[mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
-              {clientLogos.map((src, i) => (
+              {CLIENT_LOGOS.map(({ id, src, alt }) => (
                 <img
-                  key={src}
+                  key={id}
                   src={src}
-                  alt={`Client ${i + 1}`}
+                  alt={alt}
                   loading="lazy"
                   decoding="async"
                   className="mr-10 sm:mr-14 h-7 sm:h-8 w-auto max-w-[110px] object-contain brightness-0 invert opacity-55 hover:opacity-85 transition-opacity"

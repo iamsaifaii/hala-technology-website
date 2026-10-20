@@ -8,11 +8,7 @@ import {
   Palette 
 } from 'lucide-react';
 
-const companyLogos = Array.from({ length: 20 }, (_, i) => ({
-  id: i + 1,
-  src: `/Companies Logos/${i + 1}.png`,
-  alt: `Company Logo ${i + 1}`,
-}));
+import { CLIENT_LOGOS as companyLogos } from '@/lib/client-logos';
 
 const services = [
   {

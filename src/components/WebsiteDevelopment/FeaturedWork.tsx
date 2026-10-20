@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowUpRight } from 'lucide-react';
 
+import { CLIENT_LOGOS } from '@/lib/client-logos';
+
 const projects = [
   {
     id: 1,
@@ -42,18 +44,10 @@ const projects = [
   }
 ];
 
-const clientLogos = [
-  { id: 1, src: '/Companies Logos/1.png', alt: 'Client Partner 1' },
-  { id: 2, src: '/Companies Logos/2.png', alt: 'Client Partner 2' },
-  { id: 3, src: '/Companies Logos/3.png', alt: 'Client Partner 3' },
-  { id: 4, src: '/Companies Logos/4.png', alt: 'Client Partner 4' },
-  { id: 5, src: '/Companies Logos/5.png', alt: 'Client Partner 5' },
-  { id: 6, src: '/Companies Logos/6.png', alt: 'Client Partner 6' },
-  { id: 7, src: '/Companies Logos/7.png', alt: 'Client Partner 7' },
-  { id: 8, src: '/Companies Logos/8.png', alt: 'Client Partner 8' },
-  { id: 9, src: '/Companies Logos/9.png', alt: 'Client Partner 9' },
-  { id: 10, src: '/Companies Logos/10.png', alt: 'Client Partner 10' }
-];
+// This row intentionally shows a subset, not the full wall. It previously held
+// assets 1-10; Cocomix (1), Farada (5), Mangrove (9) and Keen (10) were retired,
+// so the same slice now yields six.
+const clientLogos = CLIENT_LOGOS.filter((logo) => logo.id <= 10);
 
 export default function FeaturedWork() {
   return (
