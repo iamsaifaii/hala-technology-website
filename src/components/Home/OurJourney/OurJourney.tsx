@@ -3,9 +3,11 @@
 import { CLIENT_LOGOS } from '@/lib/client-logos';
 
 // Two independent marquee rows. Each row loops on its own, so the halves do not
-// need to be equal length — 15 logos split 8 / 7.
-const logosRow1 = CLIENT_LOGOS.slice(0, 8);
-const logosRow2 = CLIENT_LOGOS.slice(8);
+// need to be equal length; the split is derived rather than hardcoded so it
+// stays balanced as logos are added or retired.
+const SPLIT = Math.ceil(CLIENT_LOGOS.length / 2);
+const logosRow1 = CLIENT_LOGOS.slice(0, SPLIT);
+const logosRow2 = CLIENT_LOGOS.slice(SPLIT);
 
 const row1 = [...logosRow1, ...logosRow1, ...logosRow1, ...logosRow1];
 const row2 = [...logosRow2, ...logosRow2, ...logosRow2, ...logosRow2];

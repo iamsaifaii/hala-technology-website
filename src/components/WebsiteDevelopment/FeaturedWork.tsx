@@ -44,9 +44,9 @@ const projects = [
   }
 ];
 
-// This row intentionally shows a subset, not the full wall. It previously held
-// assets 1-10; Cocomix (1), Farada (5), Mangrove (9) and Keen (10) were retired,
-// so the same slice now yields six.
+// This row intentionally shows a subset, not the full wall. It originally held
+// assets 1-10; Cocomix (1), Dream Pharmacy (2), Farada (5), Mangrove (9) and
+// Keen (10) have since been retired, so the same slice now yields five.
 const clientLogos = CLIENT_LOGOS.filter((logo) => logo.id <= 10);
 
 export default function FeaturedWork() {

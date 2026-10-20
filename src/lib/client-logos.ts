@@ -23,7 +23,6 @@ export type ClientLogo = {
 };
 
 export const CLIENT_LOGOS: ClientLogo[] = [
-  { id: 2,  src: '/Companies Logos/2.png',  alt: 'Dream Pharmacy' },
   { id: 3,  src: '/Companies Logos/3.png',  alt: 'Marina Byblos Hotel' },
   { id: 4,  src: '/Companies Logos/4.png',  alt: 'Gulf Special Building Maintenance (GSBM)' },
   { id: 6,  src: '/Companies Logos/6.png',  alt: 'Green Crystal Ventilators and Air Filters Trading' },
@@ -41,12 +40,13 @@ export const CLIENT_LOGOS: ClientLogo[] = [
 ];
 
 /**
- * Removed on 2026-10-20 at the client's request. Listed here so the asset
- * numbers are not silently reused and so the removal is self-documenting:
- *   1  — Cocomix
- *   5  — Farada
- *   9  — Mangrove Adventures
- *   10 — Keen
- *   12 — Sole Therapy
+ * Removed at the client's request. Listed here so the asset numbers are not
+ * silently reused and so each removal is self-documenting:
+ *   1  — Cocomix             (2026-10-20)
+ *   5  — Farada              (2026-10-20)
+ *   9  — Mangrove Adventures (2026-10-20)
+ *   10 — Keen                (2026-10-20)
+ *   12 — Sole Therapy        (2026-10-20)
+ *   2  — Dream Pharmacy      (2026-10-20)
  */
-export const RETIRED_LOGO_IDS = [1, 5, 9, 10, 12] as const;
+export const RETIRED_LOGO_IDS = [1, 2, 5, 9, 10, 12] as const;
