@@ -392,11 +392,21 @@ export default function ContactCTA({
           </button>
         </div>
 
-        <form data-lenis-prevent="true" className="flex flex-col gap-3.5 flex-1 overflow-y-auto max-h-[460px] pr-1 custom-scrollbar" onSubmit={handleSubmit}>
+        <form id="booking-form" name="booking-form" data-lenis-prevent="true" className="flex flex-col gap-3.5 flex-1 overflow-y-auto max-h-[460px] pr-1 custom-scrollbar" onSubmit={handleSubmit}>
+          {/*
+            GoHighLevel external tracking reads fields via `new FormData(form)`:
+            it only sees inputs with a `name`, and it skips type="hidden".
+            Services (toggle pills) and the chosen slot aren't real inputs, so
+            they are mirrored here as visually hidden, read-only text inputs.
+          */}
+          <input type="text" name="services" readOnly tabIndex={-1} aria-hidden="true" className="sr-only" value={formData.services.join(', ')} />
+          <input type="text" name="appointment_date" readOnly tabIndex={-1} aria-hidden="true" className="sr-only" value={selectedDate ? selectedDate.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) : ''} />
+          <input type="text" name="appointment_time" readOnly tabIndex={-1} aria-hidden="true" className="sr-only" value={selectedTime ?? ''} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
-              <label className="text-[11px] font-semibold text-white/90">Full Name *</label>
+              <label htmlFor="booking-name" className="text-[11px] font-semibold text-white/90">Full Name *</label>
               <input
+                id="booking-name" name="name" autoComplete="name"
                 type="text" required
                 value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
                 placeholder="John Doe"
@@ -405,8 +415,9 @@ export default function ContactCTA({
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-[11px] font-semibold text-white/90">Work Email *</label>
+              <label htmlFor="booking-email" className="text-[11px] font-semibold text-white/90">Work Email *</label>
               <input
+                id="booking-email" name="email" autoComplete="email"
                 type="email" required
                 value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
                 placeholder="john@company.com"
@@ -417,8 +428,9 @@ export default function ContactCTA({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
-              <label className="text-[11px] font-semibold text-white/90">Job Title</label>
+              <label htmlFor="booking-job-title" className="text-[11px] font-semibold text-white/90">Job Title</label>
               <input
+                id="booking-job-title" name="job_title" autoComplete="organization-title"
                 type="text"
                 value={formData.jobTitle} onChange={e => setFormData({ ...formData, jobTitle: e.target.value })}
                 placeholder="Marketing Director"
@@ -427,8 +439,9 @@ export default function ContactCTA({
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-[11px] font-semibold text-white/90">Country</label>
+              <label htmlFor="booking-country" className="text-[11px] font-semibold text-white/90">Country</label>
               <input
+                id="booking-country" name="country" autoComplete="country-name"
                 type="text"
                 value={formData.country} onChange={e => setFormData({ ...formData, country: e.target.value })}
                 placeholder="United Arab Emirates"
@@ -464,8 +477,9 @@ export default function ContactCTA({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
-              <label className="text-[11px] font-semibold text-white/90">Est. Monthly Budget (AED)</label>
+              <label htmlFor="booking-budget" className="text-[11px] font-semibold text-white/90">Est. Monthly Budget (AED)</label>
               <select
+                id="booking-budget" name="budget"
                 value={formData.budget} onChange={e => setFormData({ ...formData, budget: e.target.value })}
                 className="w-full bg-[#181818] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:border-white focus:outline-none transition-colors cursor-pointer"
               >
@@ -478,8 +492,9 @@ export default function ContactCTA({
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-[11px] font-semibold text-white/90">How did you hear about us?</label>
+              <label htmlFor="booking-source" className="text-[11px] font-semibold text-white/90">How did you hear about us?</label>
               <select
+                id="booking-source" name="how_did_you_hear"
                 value={formData.howDidYouHear} onChange={e => setFormData({ ...formData, howDidYouHear: e.target.value })}
                 className="w-full bg-[#181818] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:border-white focus:outline-none transition-colors cursor-pointer"
               >
@@ -493,8 +508,9 @@ export default function ContactCTA({
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-[11px] font-semibold text-white/90">Project Details / Message</label>
+            <label htmlFor="booking-message" className="text-[11px] font-semibold text-white/90">Project Details / Message</label>
             <textarea
+              id="booking-message" name="message"
               rows={2}
               value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })}
               placeholder="Tell us briefly about your goals..."

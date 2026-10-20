@@ -136,6 +136,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         {/* Marketing/analytics vendors — injected only after consent is granted */}
         <ConsentGatedScripts />
+
+        {/*
+          GoHighLevel / LeadConnector External Tracking — loaded for every
+          visitor so all native <form> submissions reach the CRM. It reads
+          fields by their `name` attribute, so every form input must have one.
+        */}
+        <Script
+          id="leadconnector-tracking"
+          src="https://link.msgsndr.com/js/external-tracking.js"
+          data-tracking-id="tk_36f0e8fca7294e6db129686edff0422f"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

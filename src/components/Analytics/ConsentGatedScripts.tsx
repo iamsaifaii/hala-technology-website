@@ -50,13 +50,7 @@ export default function ConsentGatedScripts() {
         strategy="afterInteractive"
       />
 
-      {/* GoHighLevel / LeadConnector External Tracking */}
-      <Script
-        id="leadconnector-tracking"
-        src="https://link.msgsndr.com/js/external-tracking.js"
-        data-tracking-id="tk_e6fce949eb71496dba81405198a3ca81"
-        strategy="afterInteractive"
-      />
+      {/* GoHighLevel External Tracking now loads unconditionally in app/layout.tsx */}
     </>
   );
 }
