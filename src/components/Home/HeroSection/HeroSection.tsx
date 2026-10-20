@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, memo } from 'react';
+import { captureLead } from '@/lib/capture-lead';
 import Image from 'next/image';
 import { X, ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -20,8 +21,9 @@ function HeroSectionComponent() {
 
   const handleEmailSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
+    captureLead(email, 'home-hero');
     openModal();
-  }, [openModal]);
+  }, [openModal, email]);
 
   return (
     <>
@@ -120,7 +122,7 @@ function HeroSectionComponent() {
             >
               <X className="w-5 h-5 text-white" />
             </button>
-            <ContactCTA formOnly={true} />
+            <ContactCTA formOnly={true} initialEmail={email} />
           </div>
         </div>
       )}

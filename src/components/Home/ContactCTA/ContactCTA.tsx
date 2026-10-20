@@ -74,7 +74,20 @@ const availableServices = [
   'Marketing Automation'
 ];
 
-export default function ContactCTA({ contained = false, formOnly = false }: { contained?: boolean; formOnly?: boolean }) {
+export default function ContactCTA({
+  contained = false,
+  formOnly = false,
+  initialEmail = '',
+}: {
+  contained?: boolean;
+  formOnly?: boolean;
+  /**
+   * Email already typed into a page's hero capture field. The hero forms only
+   * open this modal; without this the visitor had to retype the address they
+   * had just entered, which is a needless drop-off point.
+   */
+  initialEmail?: string;
+}) {
   const router = useRouter();
   const [step, setStep] = useState<'calendar' | 'form'>('calendar');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -105,7 +118,7 @@ export default function ContactCTA({ contained = false, formOnly = false }: { co
   // Form State
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
+    email: initialEmail,
     jobTitle: '',
     country: '',
     services: [] as string[],
@@ -190,7 +203,7 @@ export default function ContactCTA({ contained = false, formOnly = false }: { co
     setStep('calendar');
     setSelectedDate(null);
     setSelectedTime(null);
-    setFormData({ name: '', email: '', jobTitle: '', country: '', services: [], budget: '', howDidYouHear: '', message: '' });
+    setFormData({ name: '', email: initialEmail, jobTitle: '', country: '', services: [], budget: '', howDidYouHear: '', message: '' });
     setCaptchaToken(null);
   };
 

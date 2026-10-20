@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useCallback } from 'react';
+import { captureLead } from '@/lib/capture-lead';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { X, ArrowRight } from 'lucide-react';
@@ -30,6 +31,7 @@ const ContactCTA = dynamic(() => import('@/components/Home/ContactCTA/ContactCTA
 
 export default function AIAgentHero() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [email, setEmail] = useState('');
   const openModal = useCallback(() => setIsBookingModalOpen(true), []);
   const closeModal = useCallback(() => setIsBookingModalOpen(false), []);
 
@@ -70,11 +72,13 @@ export default function AIAgentHero() {
 
         {/* Email + CTA — stacked on mobile, side-by-side on sm+ */}
         <form
-          onSubmit={(e) => { e.preventDefault(); openModal(); }}
+          onSubmit={(e) => { e.preventDefault(); captureLead(email, 'ai-agent-hero'); openModal(); }}
           className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full max-w-[460px] mt-8 mb-10 sm:mb-12"
         >
           <input
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your work email"
             className="flex-1 w-full bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-white/45 text-[14px] font-medium px-4 py-3.5 rounded-xl outline-none focus:border-[#007FFF]/70 transition-colors text-center sm:text-left"
           />
@@ -133,7 +137,7 @@ export default function AIAgentHero() {
           >
             <X className="w-5 h-5 text-white" />
           </button>
-          <ContactCTA formOnly={true} />
+          <ContactCTA formOnly={true} initialEmail={email} />
         </div>
       </div>
     )}
