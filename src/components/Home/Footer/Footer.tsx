@@ -57,12 +57,14 @@ const footerColumns = [
       { name: 'Web Development', href: '/website-development' },
       { name: 'Digital Marketing', href: '/digital-marketing' },
       { name: 'AI Agent', href: '/ai-agent' },
+      { name: 'SEO', href: '/seo' },
     ]
   },
   {
     header: 'RESOURCES',
     links: [
       { name: 'FAQs', href: '/faqs' },
+      { name: 'Blog', href: '/blogs' },
     ]
   },
 ];
