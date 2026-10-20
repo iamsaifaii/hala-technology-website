@@ -103,7 +103,7 @@ export default function GraphicDesignHero() {
         <div className="max-w-[900px] text-center relative z-30">
 
           <p className="font-jakarta text-xl md:text-2xl lg:text-3xl leading-[1.6] md:leading-[1.7] mb-10 md:mb-14 text-[#E8E6E1]">
-            At Hala Smart Technologies we believe graphic design is more than just making things look good. It's about turning your brand's identity into visuals that grab attention communicate clearly and drive real engagement.
+            At Hala Technology we believe graphic design is more than just making things look good. It's about turning your brand's identity into visuals that grab attention communicate clearly and drive real engagement.
           </p>
 
           <p className="font-jakarta text-lg md:text-xl lg:text-2xl leading-[1.6] mb-12 md:mb-16 text-[#E8E6E1]/80">

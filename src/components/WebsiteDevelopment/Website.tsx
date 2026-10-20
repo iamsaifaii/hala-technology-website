@@ -148,7 +148,7 @@ export default function Website() {
       <section className="relative bg-[#111111] z-20 rounded-t-[40px] md:rounded-t-[60px] -mt-8 md:-mt-12 pt-10 pb-12 md:pt-16 md:pb-16 px-6 flex flex-col items-center">
         <div className="max-w-[900px] text-center relative z-30">
           <p className="font-jakarta text-xl md:text-2xl lg:text-3xl leading-[1.6] md:leading-[1.7] mb-10 md:mb-14 text-[#E8E6E1]">
-            At Hala Smart Technologies we don&apos;t just build websites we craft powerful digital experiences that drive real business growth. As Dubai&apos;s trusted web design agency we combine modern technology with bold purposeful design to create solutions that don&apos;t just compete they lead.
+            At Hala Technology we don&apos;t just build websites we craft powerful digital experiences that drive real business growth. As Dubai&apos;s trusted web design agency we combine modern technology with bold purposeful design to create solutions that don&apos;t just compete they lead.
           </p>
           <p className="font-jakarta text-lg md:text-xl lg:text-2xl leading-[1.6] mb-12 md:mb-16 text-[#E8E6E1]/80">
             From startups to established enterprises UAE&apos;s most ambitious brands trust us to deliver results across every industry. Your website isn&apos;t just a digital business card it&apos;s your hardest working salesperson open 24/7 building trust and closing deals while you sleep.

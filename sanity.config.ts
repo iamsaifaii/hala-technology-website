@@ -8,7 +8,7 @@ import { monochromeTheme } from './src/sanity/theme'
 
 export default defineConfig({
   name: 'default',
-  title: 'Hala Smart Technologies Studio',
+  title: 'Hala Technology Studio',
 
   projectId,
   dataset,

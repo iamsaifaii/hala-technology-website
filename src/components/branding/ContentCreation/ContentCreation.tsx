@@ -66,7 +66,7 @@ export default function ContentCreation() {
 
           {/* Subtitle */}
           <p className="font-jakarta text-[15px] sm:text-[17px] md:text-[19px] lg:text-[21px] max-w-[720px] font-medium text-white/90 leading-relaxed text-left">
-            At Hala Smart Technologies we craft content that gives your brand a voice people actually listen to.
+            At Hala Technology we craft content that gives your brand a voice people actually listen to.
           </p>
 
           {/* Email + CTA — stacked on mobile, side-by-side on sm+ */}
@@ -133,7 +133,7 @@ export default function ContentCreation() {
             </p>
 
             <p className="font-jakarta text-base md:text-lg text-[#444444] leading-[1.7] mb-6">
-              At Hala Smart Technologies we understand that every word image or video you share reflects your brand. That's why we focus on creating content that feels genuine speaks to your audience naturally and inspires them to take action.
+              At Hala Technology we understand that every word image or video you share reflects your brand. That's why we focus on creating content that feels genuine speaks to your audience naturally and inspires them to take action.
             </p>
 
             <p className="font-jakarta text-base md:text-lg text-[#444444] leading-[1.7] mb-10">

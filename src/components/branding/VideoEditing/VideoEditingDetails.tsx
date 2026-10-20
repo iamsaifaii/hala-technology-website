@@ -32,7 +32,7 @@ export default function VideoEditingDetails() {
               <Scissors className="w-6 h-6" />
             </div>
             <p className="font-jakarta text-lg sm:text-xl leading-[1.8] font-medium text-[#555]">
-              At <strong className="font-semibold text-[#111]">Hala Smart Technology</strong> we believe great video content isn't just about hitting record it's about how it's cut paced and presented. Our editing team transforms raw footage into polished scroll stopping videos while our custom thumbnail designs make sure viewers click before they scroll past.
+              At <strong className="font-semibold text-[#111]">Hala Technology</strong> we believe great video content isn't just about hitting record it's about how it's cut paced and presented. Our editing team transforms raw footage into polished scroll stopping videos while our custom thumbnail designs make sure viewers click before they scroll past.
             </p>
           </div>
 
@@ -57,7 +57,7 @@ export default function VideoEditingDetails() {
               <PlaySquare className="w-6 h-6" />
             </div>
             <p className="font-jakarta text-lg sm:text-xl text-[#555] leading-[1.8] font-medium">
-              At <strong className="font-semibold text-[#111]">Hala Smart Technology</strong> we craft edits that hold attention connect with your audience work smoothly across every platform and stay true to your brand's identity and message.
+              At <strong className="font-semibold text-[#111]">Hala Technology</strong> we craft edits that hold attention connect with your audience work smoothly across every platform and stay true to your brand's identity and message.
             </p>
           </div>
 

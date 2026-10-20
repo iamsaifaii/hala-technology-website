@@ -29,13 +29,13 @@ const categories: ServiceCategory[] = [
       {
         id: 'digital-marketing',
         title: 'Digital Marketing',
-        description: 'Are you struggling to reach your target audience or convert clicks into customers? At Hala Smart Technologies, we provide professional digital marketing services in Dubai that help businesses grow smarter and faster. From SEO to PPC, social media marketing to content strategies, our experts use proven methods to increase visibility, drive qualified leads, and maximize ROI.',
+        description: 'Are you struggling to reach your target audience or convert clicks into customers? At Hala Technology, we provide professional digital marketing services in Dubai that help businesses grow smarter and faster. From SEO to PPC, social media marketing to content strategies, our experts use proven methods to increase visibility, drive qualified leads, and maximize ROI.',
         href: '/digital-marketing'
       },
       {
         id: 'seo',
         title: 'Search Engine Optimization',
-        description: 'Looking for professional SEO services in Dubai that help your business stand out online? At Hala Smart Technology, we specialize in delivering data-driven, innovative, and strategic SEO solutions that not only improve rankings but also drive real results. Whether you need keyword research, on-page optimization, technical SEO or complete search engine optimization management, our team is here to turn your website into a powerful lead generating platform.',
+        description: 'Looking for professional SEO services in Dubai that help your business stand out online? At Hala Technology, we specialize in delivering data-driven, innovative, and strategic SEO solutions that not only improve rankings but also drive real results. Whether you need keyword research, on-page optimization, technical SEO or complete search engine optimization management, our team is here to turn your website into a powerful lead generating platform.',
         href: '/seo'
       },
       {
@@ -47,7 +47,7 @@ const categories: ServiceCategory[] = [
       {
         id: 'content-creation',
         title: 'Content Creation',
-        description: 'Struggling to create content that grabs attention and drives results? At Hala Smart Technologies, we provide professional content creation services in Dubai designed to help businesses communicate their brand story effectively. From website content to social media posts, blogs to video scripts, our creative team ensures your content not only looks great but also performs.',
+        description: 'Struggling to create content that grabs attention and drives results? At Hala Technology, we provide professional content creation services in Dubai designed to help businesses communicate their brand story effectively. From website content to social media posts, blogs to video scripts, our creative team ensures your content not only looks great but also performs.',
         href: '/branding/content-creation'
       }
     ]
@@ -59,25 +59,25 @@ const categories: ServiceCategory[] = [
       {
         id: 'web-development',
         title: 'Web Development',
-        description: 'Looking for professional web development services in Dubai that deliver results? At Hala Smart Technologies, we design and develop websites that don’t just look good they perform, convert, and scale with your business. From custom websites to eCommerce Platforms, our expert developers combine creativity, strategy, and the latest technology to give your brand a strong online presence.',
+        description: 'Looking for professional web development services in Dubai that deliver results? At Hala Technology, we design and develop websites that don’t just look good they perform, convert, and scale with your business. From custom websites to eCommerce Platforms, our expert developers combine creativity, strategy, and the latest technology to give your brand a strong online presence.',
         href: '/website-development'
       },
       {
         id: 'graphic-designing',
         title: 'Graphic Designing',
-        description: 'Looking for professional graphic design services in Dubai that make your business stand out? At Hala Smart Technologies, we specialize in delivering eye-catching, innovative, and strategic designs that not only look stunning but also convert. Whether you need logo design, social media graphics, marketing materials, or complete brand identity design, our team is here to turn your ideas into impactful visuals.',
+        description: 'Looking for professional graphic design services in Dubai that make your business stand out? At Hala Technology, we specialize in delivering eye-catching, innovative, and strategic designs that not only look stunning but also convert. Whether you need logo design, social media graphics, marketing materials, or complete brand identity design, our team is here to turn your ideas into impactful visuals.',
         href: '/branding/graphic-design'
       },
       {
         id: 'video-editing',
         title: 'Video Editing',
-        description: 'Looking for professional video editing services in Dubai that bring your stories to life? At Hala Smart Technologies, we specialize in transforming your raw footage into polished, engaging, and impactful videos. Whether it’s for social media, corporate presentations, ads, or events, our expert editors use creativity and the latest tools to deliver videos that truly stand out.',
+        description: 'Looking for professional video editing services in Dubai that bring your stories to life? At Hala Technology, we specialize in transforming your raw footage into polished, engaging, and impactful videos. Whether it’s for social media, corporate presentations, ads, or events, our expert editors use creativity and the latest tools to deliver videos that truly stand out.',
         href: '/branding/video-editing'
       },
       {
         id: 'ai-agent',
         title: 'AI Agent',
-        description: 'Looking to scale your business with the power of artificial intelligence? At Hala Smart Technologies, we provide advanced AI agent services in Dubai designed to automate repetitive tasks, boost efficiency, and improve customer experience. From chatbots to workflow automation, our AI solutions empower businesses to work smarter and stay ahead of the competition.',
+        description: 'Looking to scale your business with the power of artificial intelligence? At Hala Technology, we provide advanced AI agent services in Dubai designed to automate repetitive tasks, boost efficiency, and improve customer experience. From chatbots to workflow automation, our AI solutions empower businesses to work smarter and stay ahead of the competition.',
         href: '/ai-agent'
       }
     ]

@@ -1,6 +1,6 @@
 # hala-technology-website
 
-Official website and digital platform for Hala Smart Technologies.
+Official website and digital platform for Hala Technology.
 
 ## Tech Stack
 

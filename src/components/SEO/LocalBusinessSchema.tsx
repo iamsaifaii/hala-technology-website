@@ -5,7 +5,7 @@ export default function LocalBusinessSchema() {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     "name": "Hala Technologies",
-    "alternateName": "Hala Smart Technologies",
+    "alternateName": "Hala Technology",
     "image": "https://halatechnology.ae/hero-images/HomeHeroimage.png",
     "url": "https://halatechnology.ae",
     "telephone": "+971 58 613 9007",

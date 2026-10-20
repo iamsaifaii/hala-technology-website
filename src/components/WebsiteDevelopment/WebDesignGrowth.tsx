@@ -59,7 +59,7 @@ export default function WebDesignGrowth() {
 
         {/* Subtitle / Paragraph */}
         <p className="text-center font-jakarta text-base sm:text-lg text-[#666666] font-medium max-w-2xl leading-relaxed mb-14 sm:mb-16">
-          Hala Smart replaces slow outdated websites with fast custom built platforms designed to scale with your business.
+          Hala Technology replaces slow outdated websites with fast custom built platforms designed to scale with your business.
         </p>
 
         {/* 5-Column Grid */}

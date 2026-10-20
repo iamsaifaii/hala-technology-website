@@ -105,7 +105,7 @@ export default function ContentCreationServices() {
             <span className="font-jakarta pr-2">Perform &amp; Convert</span>
           </h2>
           <p className="text-lg md:text-xl text-[#555555] font-medium max-w-2xl">
-            At Hala Smart Technologies we blend creativity with strategy to deliver content that actually works. Every piece is original tailored and aligned with your brand's voice and goals.
+            At Hala Technology we blend creativity with strategy to deliver content that actually works. Every piece is original tailored and aligned with your brand's voice and goals.
           </p>
         </div>
 

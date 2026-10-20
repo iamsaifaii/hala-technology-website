@@ -27,7 +27,7 @@ const CATEGORIES = [
         id: 'on-page-seo',
         title: 'On-Page SEO',
         icon: FileText,
-        description: 'At Hala Smart Technologies, we specialize in delivering powerful On-Page SEO services that optimize your website for maximum visibility and conversions. Our team works on all the key factors of on-page SEO to ensure your site ranks higher on Google, attracts the right audience, and delivers a seamless user experience.'
+        description: 'At Hala Technology, we specialize in delivering powerful On-Page SEO services that optimize your website for maximum visibility and conversions. Our team works on all the key factors of on-page SEO to ensure your site ranks higher on Google, attracts the right audience, and delivers a seamless user experience.'
       }
     ]
   },

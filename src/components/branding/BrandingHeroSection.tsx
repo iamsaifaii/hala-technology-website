@@ -101,7 +101,7 @@ export default function BrandingHeroSection() {
         <div className="max-w-[900px] text-center relative z-30">
 
           <p className="font-jakarta text-xl md:text-2xl lg:text-3xl leading-[1.6] md:leading-[1.7] mb-10 md:mb-14 text-[#E8E6E1]">
-            At Hala Smart Technologies we're rethinking what branding really means how your business connects with the people it's trying to reach. We believe a strong brand isn't just a logo it's the clearest most natural way to communicate who you are and we build the identities that make that possible.
+            At Hala Technology we're rethinking what branding really means how your business connects with the people it's trying to reach. We believe a strong brand isn't just a logo it's the clearest most natural way to communicate who you are and we build the identities that make that possible.
           </p>
 
           <p className="font-jakarta text-lg md:text-xl lg:text-2xl leading-[1.6] mb-12 md:mb-16 text-[#E8E6E1]/80">

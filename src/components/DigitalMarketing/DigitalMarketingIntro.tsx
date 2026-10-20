@@ -45,7 +45,7 @@ export default function DigitalMarketingIntro() {
             </h2>
 
             <p className="font-jakarta text-base md:text-lg text-[#555555] leading-relaxed mb-8">
-              Digital marketing helps your business connect with people online. It makes your brand more visible, builds trust with customers, and creates new opportunities for growth. At Hala Smart Technologies, we combine strategy, creativity and analytics to design campaigns that deliver real results. Whether your goal is more traffic, higher sales or stronger brand awareness, our full-service solutions create measurable growth for your business.
+              Digital marketing helps your business connect with people online. It makes your brand more visible, builds trust with customers, and creates new opportunities for growth. At Hala Technology, we combine strategy, creativity and analytics to design campaigns that deliver real results. Whether your goal is more traffic, higher sales or stronger brand awareness, our full-service solutions create measurable growth for your business.
             </p>
 
             <Link

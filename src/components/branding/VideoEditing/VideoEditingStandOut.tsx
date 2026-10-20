@@ -144,7 +144,7 @@ export default function VideoEditingStandOut() {
           </h2>
 
           <p className="font-jakarta text-base md:text-lg lg:text-[19px] text-[#555] leading-[1.8] font-medium mb-10 md:mb-12 max-w-[600px]">
-            At Hala Smart Technologies our video editing services in Dubai go far beyond simple cuts and transitions. We build stories that resonate with your audience blending creativity precision and modern editing tools to deliver videos that are visually striking emotionally engaging and built to perform.
+            At Hala Technology our video editing services in Dubai go far beyond simple cuts and transitions. We build stories that resonate with your audience blending creativity precision and modern editing tools to deliver videos that are visually striking emotionally engaging and built to perform.
           </p>
 
           <ul ref={listItemsRef} className="flex flex-col gap-4 md:gap-5">

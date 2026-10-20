@@ -11,7 +11,7 @@ export default function WhyChooseUs() {
       {/* Full-width background image */}
       <Image
         src="/AIimage.png"
-        alt="Hala Smart Technologies — AI Solutions"
+        alt="Hala Technology — AI Solutions"
         fill
         priority
         sizes="100vw"

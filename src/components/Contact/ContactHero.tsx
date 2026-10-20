@@ -11,7 +11,7 @@ export default function ContactHero() {
         <div className="flex items-center gap-3 mb-6">
           <ArrowRight className="w-3.5 h-3.5 text-[#007FFF]" />
           <span className="font-jakarta text-xs md:text-sm text-[#666666] font-medium tracking-wide">
-            Hala Smart Technologies • Contact &amp; Consultation
+            Hala Technology • Contact &amp; Consultation
           </span>
         </div>
 

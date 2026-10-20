@@ -83,7 +83,7 @@ function MarketingSolutionsComponent() {
               Everything you need. One team.
             </h3>
             <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-4 md:mb-6">
-              At Hala Smart Technologies, we bring SEO, paid advertising, content creation, and social media under one roof. Instead of running isolated campaigns, we build a connected growth strategy designed to turn your audience into loyal, paying customers.
+              At Hala Technology, we bring SEO, paid advertising, content creation, and social media under one roof. Instead of running isolated campaigns, we build a connected growth strategy designed to turn your audience into loyal, paying customers.
             </p>
             <Link href="/contact" className="flex items-center justify-center gap-3 w-full sm:w-auto bg-[#007FFF] text-white font-bold py-3.5 md:py-4 px-6 md:px-8 rounded-xl hover:bg-[#0066CC] transition-colors self-start shadow-[0_0_20px_rgba(0,127,255,0.2)] no-underline">
               <Search className="w-5 h-5" />

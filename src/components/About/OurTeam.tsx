@@ -28,7 +28,7 @@ const teamMembers = [
   {
     id: 4,
     name: 'Hasnain Akbar',
-    role: 'SEO Expert',
+    role: 'SEO & Marketing Expert',
     category: 'Marketing',
     image: '/team-pics/husnain.jpg',
   },
@@ -129,7 +129,7 @@ export default function OurTeam() {
                   transition-opacity duration-500 delay-100
                   ${isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}
                 `}>
-                   <h3 className="text-white font-jakarta font-bold text-xs sm:text-sm whitespace-nowrap md:transform md:-rotate-90 origin-center tracking-widest uppercase opacity-60 group-hover:opacity-100 transition-opacity">
+                   <h3 className="text-white font-jakarta font-semibold text-[11px] md:text-xs whitespace-nowrap md:transform md:-rotate-90 origin-center tracking-[0.15em] uppercase opacity-70 group-hover:opacity-100 transition-opacity">
                      {member.name.split(' ')[0]}
                    </h3>
                 </div>
@@ -143,10 +143,16 @@ export default function OurTeam() {
                   `}
                 >
                   <div className="w-full">
-                    <span className="font-jakarta text-[10px] md:text-sm text-white uppercase tracking-widest font-bold block mb-1 md:mb-3 drop-shadow-md">
+                    {/* One consistent, medium type scale for every card. The name
+                        previously ran up to 42px extrabold with whitespace-nowrap,
+                        so longer names ("Taimoor Ali Warraich", "Syeda Masoom
+                        Zahra") overflowed the card and were clipped by the
+                        parent's overflow-hidden. Wrapping is now allowed as a
+                        safety net for any name added later. */}
+                    <span className="font-jakarta text-[11px] md:text-xs text-white/90 uppercase tracking-[0.15em] font-semibold block mb-1.5 md:mb-2 drop-shadow-md">
                       {member.role}
                     </span>
-                    <h3 className="font-jakarta text-xl sm:text-3xl md:text-4xl lg:text-[42px] font-extrabold text-white mb-0 md:mb-1 whitespace-nowrap drop-shadow-lg">
+                    <h3 className="font-jakarta text-lg md:text-2xl font-semibold text-white leading-snug drop-shadow-lg">
                       {member.name}
                     </h3>
                   </div>

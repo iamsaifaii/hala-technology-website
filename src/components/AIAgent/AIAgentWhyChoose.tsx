@@ -23,7 +23,7 @@ export default function AIAgentWhyChoose() {
 
           {/* Description */}
           <p className="text-[#555555] text-base md:text-lg lg:text-xl font-medium max-w-4xl leading-[1.7] mb-10 md:mb-12">
-            At Hala Smart Technologies, we don’t just use AI Agents, we use it to solve real marketing challenges. Our AI Agents help you reach the right audience, increase traffic, and turn leads into loyal customers. We focus on delivering real results through trust, innovation, and smart execution. Whether you’re a startup or an established business, we make sure your marketing works smarter and delivers real growth.
+            At Hala Technology, we don’t just use AI Agents, we use it to solve real marketing challenges. Our AI Agents help you reach the right audience, increase traffic, and turn leads into loyal customers. We focus on delivering real results through trust, innovation, and smart execution. Whether you’re a startup or an established business, we make sure your marketing works smarter and delivers real growth.
           </p>
 
           {/* Buttons / Pills */}

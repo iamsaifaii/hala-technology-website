@@ -13,11 +13,11 @@ const LatestBlogsSection = dynamic(() => import('@/components/Blogs/LatestBlogsS
 export const metadata: Metadata = {
   title: 'Contact Us | Schedule a Consultation | Hala Technology Dubai',
   description:
-    'Get in touch with Hala Smart Technologies in Dubai. Schedule a 15-minute guided tour, request a custom proposal, or speak directly with our strategic consultants.',
+    'Get in touch with Hala Technology in Dubai. Schedule a 15-minute guided tour, request a custom proposal, or speak directly with our strategic consultants.',
   openGraph: {
     title: 'Contact Us | Schedule a Consultation | Hala Technology Dubai',
     description:
-      'Get in touch with Hala Smart Technologies in Dubai. Schedule a 15-minute guided tour, request a custom proposal, or speak directly with our strategic consultants.',
+      'Get in touch with Hala Technology in Dubai. Schedule a 15-minute guided tour, request a custom proposal, or speak directly with our strategic consultants.',
     url: 'https://halatechnology.ae/contact',
     images: [
       {
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Contact Us | Schedule a Consultation | Hala Technology Dubai',
     description:
-      'Get in touch with Hala Smart Technologies in Dubai. Schedule a 15-minute guided tour, request a custom proposal, or speak directly with our strategic consultants.',
+      'Get in touch with Hala Technology in Dubai. Schedule a 15-minute guided tour, request a custom proposal, or speak directly with our strategic consultants.',
     images: ['https://halatechnology.ae/og-image.png'],
   },
   alternates: {

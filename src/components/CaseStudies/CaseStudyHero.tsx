@@ -9,7 +9,7 @@ export default function CaseStudyHero() {
         <div className="flex items-center gap-3 mb-6">
           <ArrowRight className="w-3.5 h-3.5 text-[#111111]" />
           <span className="font-jakarta text-xs md:text-sm text-[#666666] font-medium tracking-wide">
-            Hala Smart Technologies
+            Hala Technology
           </span>
         </div>
 
